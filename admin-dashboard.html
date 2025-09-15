@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard | VVIT</title>
+  <link rel="stylesheet" href="style.css">
+  <script defer src="script.js"></script>
+</head>
+<body>
+  <header class="header">
+    <h1>⚙️ Admin Dashboard</h1>
+  </header>
+
+  <!-- Student Management -->
+  <section class="admin-panel">
+    <h2>👩‍🎓 Manage Students</h2>
+    <input id="studentName" placeholder="Name">
+    <input id="studentRoll" placeholder="Roll">
+    <select id="studentBranch">
+      <option value="CSE">CSE</option>
+      <option value="CSE-AIML">CSE-AIML</option>
+      <option value="AIML">AIML</option>
+    </select>
+    <input id="studentYear" placeholder="Year">
+    <input id="studentSem" placeholder="Semester">
+    <input id="studentSGPA" placeholder="SGPA">
+    <input id="studentCGPA" placeholder="CGPA">
+    <button onclick="addStudent()">Add Student</button>
+    <table id="adminStudentTable">
+      <thead><tr><th>Name</th><th>Roll</th><th>Branch</th><th>Year</th><th>Sem</th><th>SGPA</th><th>CGPA</th><th>Action</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <!-- Events -->
+  <section class="admin-panel">
+    <h2>📢 Add Upcoming Event</h2>
+    <input id="eventText" placeholder="Event details">
+    <button onclick="addEvent()">Add Event</button>
+  </section>
+
+  <!-- Study Materials -->
+  <section class="admin-panel">
+    <h2>📘 Add Study Material</h2>
+    <input id="materialText" placeholder="Material Title">
+    <input id="materialLink" placeholder="Material Link">
+    <button onclick="addMaterial()">Add Material</button>
+  </section>
+
+  <!-- Password Change -->
+  <section class="admin-panel">
+    <h2>🔑 Change Password</h2>
+    <input type="password" id="oldPassword" placeholder="Old Password">
+    <input type="password" id="newPassword" placeholder="New Password">
+    <button onclick="changePassword()">Change Password</button>
+    <p id="passwordMessage"></p>
+  </section>
+</body>
+</html>
