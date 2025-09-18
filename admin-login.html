@@ -5,6 +5,19 @@
   <title>Admin Login | VVIT</title>
   <link rel="stylesheet" href="style.css">
   <script defer src="script.js"></script>
+  <script>
+    // handle admin login
+    function adminLogin() {
+      const inputPass = document.getElementById("adminPassword").value.trim();
+      const stored = localStorage.getItem("adminPassword") || "1176"; // default
+      if (inputPass === stored) {
+        localStorage.setItem("isLoggedInAdmin", "true"); // session flag
+        window.location.href = "admin-dashboard.html";   // redirect to dashboard
+      } else {
+        document.getElementById("loginMessage").innerText = "❌ Wrong password!";
+      }
+    }
+  </script>
 </head>
 <body>
   <section class="login-box">
