@@ -13,11 +13,16 @@ function escapeHtml(text){
 }
 
 // Detect admin page: check admin IDs OR URL
-const IS_ADMIN = Boolean(
-  document.getElementById("adminStudentTable") ||
-  document.getElementById("adminEventsList") ||
-  document.getElementById("adminMaterialsList") ||
-  window.location.pathname.includes("admin-dashboard")
+// check admin login session
+const IS_ADMIN = localStorage.getItem("isLoggedInAdmin") === "true";
+log("IS_ADMIN =", IS_ADMIN);
+
+// if on admin-dashboard but not logged in → redirect
+if (window.location.pathname.includes("admin-dashboard") && !IS_ADMIN) {
+  alert("You must log in first!");
+  window.location.href = "admin-login.html";
+}
+
 );
 log("IS_ADMIN =", IS_ADMIN);
 
@@ -328,3 +333,4 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
   
+
