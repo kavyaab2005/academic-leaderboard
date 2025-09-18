@@ -30,6 +30,8 @@ function adminLogin() {
 // 🟢 STUDENT MANAGEMENT
 // ==================================================
 function addStudent() {
+  if (!document.getElementById("adminStudentTable")) return; // only admin
+
   const name = (document.getElementById("studentName")?.value || "").trim();
   const roll = (document.getElementById("studentRoll")?.value || "").trim();
   const branch = (document.getElementById("studentBranch")?.value || "").trim();
@@ -108,6 +110,7 @@ function displayStudents() {
 }
 
 function deleteStudentById(id) {
+  if (!document.getElementById("adminStudentTable")) return; // only admin
   let students = JSON.parse(localStorage.getItem("students")) || [];
   students = students.filter(s => s.id !== id);
   localStorage.setItem("students", JSON.stringify(students));
@@ -118,6 +121,7 @@ function deleteStudentById(id) {
 // 🟢 EVENT MANAGEMENT
 // ==================================================
 function addEvent() {
+  if (!document.getElementById("adminEventsList")) return; // only admin
   const text = (document.getElementById("eventText")?.value || "").trim();
   if (!text) return;
   const events = JSON.parse(localStorage.getItem("events")) || [];
@@ -153,6 +157,7 @@ function displayEvents() {
 }
 
 function deleteEventById(id) {
+  if (!document.getElementById("adminEventsList")) return; // only admin
   let events = JSON.parse(localStorage.getItem("events")) || [];
   events = events.filter(e => e.id !== id);
   localStorage.setItem("events", JSON.stringify(events));
@@ -163,6 +168,7 @@ function deleteEventById(id) {
 // 🟢 STUDY MATERIAL MANAGEMENT
 // ==================================================
 function addMaterial() {
+  if (!document.getElementById("adminMaterialsList")) return; // only admin
   const title = (document.getElementById("materialText")?.value || "").trim();
   const link = (document.getElementById("materialLink")?.value || "").trim();
   if (!title || !link) {
@@ -180,8 +186,11 @@ function addMaterial() {
 
 function displayMaterials() {
   const materials = JSON.parse(localStorage.getItem("materials")) || [];
-  document.querySelectorAll("#materialsList, .materialsList").forEach(list => {
-    list.innerHTML = "";
+
+  // Public list (students)
+  const publicList = document.getElementById("materialsList");
+  if (publicList) {
+    publicList.innerHTML = "";
     materials.forEach(m => {
       const li = document.createElement("li");
       const a = document.createElement("a");
@@ -189,19 +198,34 @@ function displayMaterials() {
       a.target = "_blank";
       a.rel = "noopener noreferrer";
       a.textContent = m.title;
+      li.appendChild(a);
+      publicList.appendChild(li);
+    });
+  }
 
+  // Admin list (with delete)
+  const adminList = document.getElementById("adminMaterialsList");
+  if (adminList) {
+    adminList.innerHTML = "";
+    materials.forEach(m => {
+      const li = document.createElement("li");
+      const a = document.createElement("a");
+      a.href = m.link;
+      a.target = "_blank";
+      a.rel = "noopener noreferrer";
+      a.textContent = m.title;
       const delBtn = document.createElement("button");
       delBtn.textContent = "🗑 Delete";
       delBtn.onclick = () => deleteMaterialById(m.id);
-
       li.appendChild(a);
       li.appendChild(delBtn);
-      list.appendChild(li);
+      adminList.appendChild(li);
     });
-  });
+  }
 }
 
 function deleteMaterialById(id) {
+  if (!document.getElementById("adminMaterialsList")) return; // only admin
   let materials = JSON.parse(localStorage.getItem("materials")) || [];
   materials = materials.filter(m => m.id !== id);
   localStorage.setItem("materials", JSON.stringify(materials));
@@ -212,6 +236,7 @@ function deleteMaterialById(id) {
 // 🟢 PASSWORD CHANGE
 // ==================================================
 function changePassword() {
+  if (!document.getElementById("newPassword")) return; // only admin
   const oldPass = (document.getElementById("oldPassword")?.value || "").trim();
   const newPass = (document.getElementById("newPassword")?.value || "").trim();
   const storedPass = localStorage.getItem("adminPassword");
@@ -232,4 +257,3 @@ window.onload = () => {
   displayEvents();
   displayMaterials();
 };
-
