@@ -12,8 +12,7 @@ function escapeHtml(text){
     .replace(/'/g,"&#039;");
 }
 
-// Detect admin page: check admin IDs OR URL
-// check admin login session
+// Detect admin page: check admin login session
 const IS_ADMIN = localStorage.getItem("isLoggedInAdmin") === "true";
 log("IS_ADMIN =", IS_ADMIN);
 
@@ -23,9 +22,6 @@ if (window.location.pathname.includes("admin-dashboard") && !IS_ADMIN) {
   window.location.href = "admin-login.html";
 }
 
-);
-log("IS_ADMIN =", IS_ADMIN);
-
 // ensure default admin password (first time)
 if (!localStorage.getItem("adminPassword")) {
   localStorage.setItem("adminPassword", "1176");
@@ -34,7 +30,7 @@ if (!localStorage.getItem("adminPassword")) {
 
 // Ensure admin list containers exist (create them if user forgot to add in HTML)
 function ensureAdminContainers() {
-  // Events: if admin page and adminEventsList missing but eventText input exists -> create list
+  // Events
   const evList = document.getElementById("adminEventsList");
   const evInput = document.getElementById("eventText");
   if (IS_ADMIN && !evList && evInput) {
@@ -44,7 +40,7 @@ function ensureAdminContainers() {
     log("Created missing #adminEventsList after #eventText");
   }
 
-  // Materials: same idea
+  // Materials
   const matList = document.getElementById("adminMaterialsList");
   const matInput = document.getElementById("materialText");
   if (IS_ADMIN && !matList && matInput) {
@@ -54,7 +50,7 @@ function ensureAdminContainers() {
     log("Created missing #adminMaterialsList after #materialText");
   }
 
-  // Admin student table: ensure it has a tbody
+  // Admin student table: ensure tbody
   const adminTable = document.getElementById("adminStudentTable");
   if (adminTable && !adminTable.querySelector("tbody")) {
     const tbody = document.createElement("tbody");
@@ -125,9 +121,7 @@ function displayStudents(){
       tr.appendChild(tdName);
       // other columns
       ["roll","branch","year","sem","sgpa","cgpa"].forEach(key=>{
-        const td = document.createElement("td");
-        td.textContent = escapeHtml(s[key]);
-        tr.appendChild(td);
+        const td = document.createElement("td"); td.textContent = escapeHtml(s[key]); tr.appendChild(td);
       });
       leaderboardTbody.appendChild(tr);
     });
@@ -140,9 +134,7 @@ function displayStudents(){
     adminTbody.innerHTML = "";
     sorted.forEach((s,i) => {
       const tr = document.createElement("tr");
-      // rank
       const tdRank = document.createElement("td"); tdRank.textContent = i+1; tr.appendChild(tdRank);
-      // name + badge
       const tdName = document.createElement("td");
       const badge = getBadgeForRank(i);
       if (badge) {
@@ -152,19 +144,14 @@ function displayStudents(){
         tdName.appendChild(span);
       }
       tdName.appendChild(document.createTextNode(escapeHtml(s.name))); tr.appendChild(tdName);
-      // other columns
       ["roll","branch","year","sem","sgpa","cgpa"].forEach(key=>{
         const td = document.createElement("td"); td.textContent = escapeHtml(s[key]); tr.appendChild(td);
       });
-      // action
       const tdAction = document.createElement("td");
       const del = document.createElement("button");
       del.type = "button";
       del.textContent = "🗑 Delete";
-      del.onclick = () => {
-        if (!confirm("Delete this student?")) return;
-        deleteStudentById(s.id);
-      };
+      del.onclick = () => { if(confirm("Delete this student?")) deleteStudentById(s.id); };
       tdAction.appendChild(del);
       tr.appendChild(tdAction);
       adminTbody.appendChild(tr);
@@ -184,7 +171,7 @@ function deleteStudentById(id){
 
 // ---------------- Events ----------------
 function addEvent(){
-  if (!IS_ADMIN) { log("addEvent blocked (not admin)"); return; }
+  if (!IS_ADMIN) { log("addEvent blocked"); return; }
   const text = (document.getElementById("eventText")?.value || "").trim();
   if (!text) { alert("Enter event text"); return; }
   const events = JSON.parse(localStorage.getItem("events")) || [];
@@ -200,9 +187,7 @@ function displayEvents(){
   const events = JSON.parse(localStorage.getItem("events")) || [];
   const joined = events.map(x=>x.text).join(" • ");
   document.querySelectorAll("#eventsMarquee, .eventsMarquee").forEach(el => el.innerText = joined);
-  log("Marquee updated:", joined);
 
-  // admin list with delete only if admin
   const adminEvents = document.getElementById("adminEventsList");
   if (adminEvents && IS_ADMIN) {
     adminEvents.innerHTML = "";
@@ -212,32 +197,24 @@ function displayEvents(){
       const del = document.createElement("button");
       del.type = "button";
       del.textContent = "🗑 Delete";
-      del.onclick = () => {
-        if (!confirm("Delete this event?")) return;
-        deleteEventById(ev.id);
-      };
+      del.onclick = () => { if(confirm("Delete this event?")) deleteEventById(ev.id); };
       li.appendChild(del);
       adminEvents.appendChild(li);
     });
-    log("Admin events list rendered, count:", events.length);
-  } else {
-    if (adminEvents) log("adminEventsList exists but IS_ADMIN=false (won't render deletes)");
-    else log("adminEventsList not present in DOM");
   }
 }
 
 function deleteEventById(id){
-  if (!IS_ADMIN) { log("deleteEventById blocked"); return; }
+  if (!IS_ADMIN) return;
   let events = JSON.parse(localStorage.getItem("events")) || [];
   events = events.filter(e => e.id !== id);
   localStorage.setItem("events", JSON.stringify(events));
-  log("Deleted event id:", id);
   displayEvents();
 }
 
 // ---------------- Materials ----------------
 function addMaterial(){
-  if (!IS_ADMIN) { log("addMaterial blocked (not admin)"); return; }
+  if (!IS_ADMIN) return;
   const title = (document.getElementById("materialText")?.value || "").trim();
   const link = (document.getElementById("materialLink")?.value || "").trim();
   if (!title || !link) { alert("Provide title and link"); return; }
@@ -245,7 +222,6 @@ function addMaterial(){
   const m = { id: Date.now(), title, link };
   materials.push(m);
   localStorage.setItem("materials", JSON.stringify(materials));
-  log("Added material:", m);
   document.getElementById("materialText").value = "";
   document.getElementById("materialLink").value = "";
   displayMaterials();
@@ -254,60 +230,51 @@ function addMaterial(){
 function displayMaterials(){
   const materials = JSON.parse(localStorage.getItem("materials")) || [];
 
-  // public list (no delete)
+  // public list
   const publicList = document.getElementById("materialsList");
   if (publicList) {
     publicList.innerHTML = "";
     materials.forEach(m => {
       const li = document.createElement("li");
       const a = document.createElement("a");
-      a.href = m.link; a.target = "_blank"; a.rel = "noopener noreferrer";
+      a.href = m.link; a.target = "_blank"; a.rel="noopener noreferrer";
       a.textContent = m.title;
       li.appendChild(a);
       publicList.appendChild(li);
     });
-    log("Public materials list rendered, count:", materials.length);
   }
 
-  // admin list (with delete) only when IS_ADMIN
+  // admin list
   const adminList = document.getElementById("adminMaterialsList");
   if (adminList && IS_ADMIN) {
     adminList.innerHTML = "";
     materials.forEach(m => {
       const li = document.createElement("li");
       const a = document.createElement("a");
-      a.href = m.link; a.target = "_blank"; a.rel = "noopener noreferrer";
+      a.href = m.link; a.target = "_blank"; a.rel="noopener noreferrer";
       a.textContent = m.title;
       li.appendChild(a);
       const del = document.createElement("button");
       del.type = "button";
       del.textContent = "🗑 Delete";
-      del.onclick = () => {
-        if (!confirm("Delete this material?")) return;
-        deleteMaterialById(m.id);
-      };
+      del.onclick = () => { if(confirm("Delete this material?")) deleteMaterialById(m.id); };
       li.appendChild(del);
       adminList.appendChild(li);
     });
-    log("Admin materials list rendered, count:", materials.length);
-  } else {
-    if (adminList) log("adminMaterialsList exists but IS_ADMIN=false (won't render deletes)");
-    else log("adminMaterialsList not present in DOM");
   }
 }
 
 function deleteMaterialById(id){
-  if (!IS_ADMIN) { log("deleteMaterialById blocked"); return; }
+  if (!IS_ADMIN) return;
   let materials = JSON.parse(localStorage.getItem("materials")) || [];
   materials = materials.filter(m => m.id !== id);
   localStorage.setItem("materials", JSON.stringify(materials));
-  log("Deleted material id:", id);
   displayMaterials();
 }
 
-// Password change (admin only)
+// ---------------- Password ----------------
 function changePassword(){
-  if (!IS_ADMIN) { log("changePassword blocked"); return; }
+  if (!IS_ADMIN) return;
   const oldPass = (document.getElementById("oldPassword")?.value || "").trim();
   const newPass = (document.getElementById("newPassword")?.value || "").trim();
   const stored = localStorage.getItem("adminPassword");
@@ -315,10 +282,8 @@ function changePassword(){
   if (oldPass === stored) {
     localStorage.setItem("adminPassword", newPass);
     if (msgEl) msgEl.innerText = "✅ Password changed successfully";
-    log("Password changed.");
   } else {
     if (msgEl) msgEl.innerText = "❌ Wrong old password";
-    log("Password change failed: wrong old password");
   }
 }
 
@@ -332,5 +297,5 @@ window.addEventListener("DOMContentLoaded", () => {
   log("Initial render done.");
 });
 
-  
 
+ 
