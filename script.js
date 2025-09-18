@@ -26,7 +26,9 @@ function adminLogin() {
   }
 }
 
-// ---------- Add Student ----------
+// ==================================================
+// 🟢 STUDENT MANAGEMENT
+// ==================================================
 function addStudent() {
   const name = (document.getElementById("studentName")?.value || "").trim();
   const roll = (document.getElementById("studentRoll")?.value || "").trim();
@@ -42,7 +44,7 @@ function addStudent() {
   }
 
   const student = {
-    id: Date.now(), // unique id so delete works even after sorting
+    id: Date.now(),
     name,
     roll,
     branch,
@@ -56,17 +58,14 @@ function addStudent() {
   students.push(student);
   localStorage.setItem("students", JSON.stringify(students));
 
-  // clear inputs (if present)
   ["studentName","studentRoll","studentBranch","studentYear","studentSem","studentSGPA","studentCGPA"]
     .forEach(id => { const el = document.getElementById(id); if (el) el.value = ""; });
 
   displayStudents();
 }
 
-// ---------- Display Students (both leaderboard and admin table) ----------
 function displayStudents() {
   const students = JSON.parse(localStorage.getItem("students")) || [];
-  // sort copy by numeric CGPA descending (coerce to number safely)
   const sorted = students.slice().sort((a,b) => (parseFloat(b.cgpa) || 0) - (parseFloat(a.cgpa) || 0));
 
   const leaderboardTbody = document.querySelector("#leaderboardTable tbody");
@@ -101,55 +100,68 @@ function displayStudents() {
         <td>${escapeHtml(s.sem)}</td>
         <td>${escapeHtml(s.sgpa)}</td>
         <td>${escapeHtml(s.cgpa)}</td>
-        <td><button onclick="deleteStudentById(${s.id})">Delete</button></td>
+        <td><button onclick="deleteStudentById(${s.id})">🗑 Delete</button></td>
       </tr>`;
       adminTbody.insertAdjacentHTML("beforeend", row);
     });
   }
 }
 
-// ---------- Delete student by unique id ----------
 function deleteStudentById(id) {
-  const students = JSON.parse(localStorage.getItem("students")) || [];
-  const idx = students.findIndex(s => s.id === id);
-  if (idx === -1) return;
-  if (!confirm("Delete this student?")) return;
-  students.splice(idx, 1);
+  let students = JSON.parse(localStorage.getItem("students")) || [];
+  students = students.filter(s => s.id !== id);
   localStorage.setItem("students", JSON.stringify(students));
   displayStudents();
 }
 
-// ---------- Events ----------
+// ==================================================
+// 🟢 EVENT MANAGEMENT
+// ==================================================
 function addEvent() {
   const text = (document.getElementById("eventText")?.value || "").trim();
   if (!text) return;
   const events = JSON.parse(localStorage.getItem("events")) || [];
   events.push({ id: Date.now(), text });
   localStorage.setItem("events", JSON.stringify(events));
-  const el = document.getElementById("eventText"); if (el) el.value = "";
+  document.getElementById("eventText").value = "";
   displayEvents();
 }
+
 function displayEvents() {
   const events = JSON.parse(localStorage.getItem("events")) || [];
-  const joined = events.map(e => e.text || e).join(" • ");
-  // update multiple possible selectors so both admin & dashboard get updated
-  document.querySelectorAll("#eventsMarquee, .eventsMarquee, #events, .events").forEach(el => {
+
+  // Dashboard display (marquee style)
+  const joined = events.map(e => e.text).join(" • ");
+  document.querySelectorAll("#eventsMarquee, .eventsMarquee").forEach(el => {
     el.innerText = joined;
   });
+
+  // Admin list (with delete buttons)
+  const adminEvents = document.getElementById("adminEventsList");
+  if (adminEvents) {
+    adminEvents.innerHTML = "";
+    events.forEach(e => {
+      const li = document.createElement("li");
+      li.textContent = e.text + " ";
+      const delBtn = document.createElement("button");
+      delBtn.textContent = "🗑 Delete";
+      delBtn.onclick = () => deleteEventById(e.id);
+      li.appendChild(delBtn);
+      adminEvents.appendChild(li);
+    });
+  }
 }
 
-// (Optional) delete event function for admin
 function deleteEventById(id) {
-  const events = JSON.parse(localStorage.getItem("events")) || [];
-  const idx = events.findIndex(e => e.id === id);
-  if (idx === -1) return;
-  if (!confirm("Delete this event?")) return;
-  events.splice(idx,1);
+  let events = JSON.parse(localStorage.getItem("events")) || [];
+  events = events.filter(e => e.id !== id);
   localStorage.setItem("events", JSON.stringify(events));
   displayEvents();
 }
 
-// ---------- Study Materials ----------
+// ==================================================
+// 🟢 STUDY MATERIAL MANAGEMENT
+// ==================================================
 function addMaterial() {
   const title = (document.getElementById("materialText")?.value || "").trim();
   const link = (document.getElementById("materialLink")?.value || "").trim();
@@ -165,11 +177,10 @@ function addMaterial() {
   document.getElementById("materialLink").value = "";
   displayMaterials();
 }
+
 function displayMaterials() {
   const materials = JSON.parse(localStorage.getItem("materials")) || [];
-  // update multiple possible list containers
-  document.querySelectorAll("#materialsList, .materialsList, #studyMaterials, .study-materials").forEach(list => {
-    if (!list) return;
+  document.querySelectorAll("#materialsList, .materialsList").forEach(list => {
     list.innerHTML = "";
     materials.forEach(m => {
       const li = document.createElement("li");
@@ -178,13 +189,28 @@ function displayMaterials() {
       a.target = "_blank";
       a.rel = "noopener noreferrer";
       a.textContent = m.title;
+
+      const delBtn = document.createElement("button");
+      delBtn.textContent = "🗑 Delete";
+      delBtn.onclick = () => deleteMaterialById(m.id);
+
       li.appendChild(a);
+      li.appendChild(delBtn);
       list.appendChild(li);
     });
   });
 }
 
-// ---------- Change Password ----------
+function deleteMaterialById(id) {
+  let materials = JSON.parse(localStorage.getItem("materials")) || [];
+  materials = materials.filter(m => m.id !== id);
+  localStorage.setItem("materials", JSON.stringify(materials));
+  displayMaterials();
+}
+
+// ==================================================
+// 🟢 PASSWORD CHANGE
+// ==================================================
 function changePassword() {
   const oldPass = (document.getElementById("oldPassword")?.value || "").trim();
   const newPass = (document.getElementById("newPassword")?.value || "").trim();
@@ -198,12 +224,12 @@ function changePassword() {
   }
 }
 
-// ---------- Auto-load on pages ----------
+// ==================================================
+// 🟢 AUTO LOAD
+// ==================================================
 window.onload = () => {
   displayStudents();
   displayEvents();
   displayMaterials();
 };
-
-
 
