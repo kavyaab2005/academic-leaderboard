@@ -1,110 +1,209 @@
-// Default admin password stored in localStorage
+// ---------- helper ----------
+function escapeHtml(text) {
+  return String(text || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+// ---------- default admin password ----------
 if (!localStorage.getItem("adminPassword")) {
   localStorage.setItem("adminPassword", "1176");
 }
 
-// Admin Login
+// ---------- Admin Login ----------
 function adminLogin() {
-  let pass = document.getElementById("adminPassword").value;
-  let storedPass = localStorage.getItem("adminPassword");
+  const passEl = document.getElementById("adminPassword");
+  const pass = passEl ? passEl.value.trim() : "";
+  const storedPass = localStorage.getItem("adminPassword");
   if (pass === storedPass) {
     window.location.href = "admin-dashboard.html";
   } else {
-    document.getElementById("loginMessage").innerText = "❌ Incorrect password";
+    const msg = document.getElementById("loginMessage");
+    if (msg) msg.innerText = "❌ Incorrect password";
   }
 }
 
-// Add Student
+// ---------- Add Student ----------
 function addStudent() {
-  let student = {
-    name: document.getElementById("studentName").value,
-    roll: document.getElementById("studentRoll").value,
-    branch: document.getElementById("studentBranch").value,
-    year: document.getElementById("studentYear").value,
-    sem: document.getElementById("studentSem").value,
-    sgpa: document.getElementById("studentSGPA").value,
-    cgpa: document.getElementById("studentCGPA").value
+  const name = (document.getElementById("studentName")?.value || "").trim();
+  const roll = (document.getElementById("studentRoll")?.value || "").trim();
+  const branch = (document.getElementById("studentBranch")?.value || "").trim();
+  const year = (document.getElementById("studentYear")?.value || "").trim();
+  const sem = (document.getElementById("studentSem")?.value || "").trim();
+  const sgpa = (document.getElementById("studentSGPA")?.value || "").trim();
+  const cgpa = (document.getElementById("studentCGPA")?.value || "").trim();
+
+  if (!name || !roll) {
+    alert("Please enter at least Name and Roll.");
+    return;
+  }
+
+  const student = {
+    id: Date.now(), // unique id so delete works even after sorting
+    name,
+    roll,
+    branch,
+    year,
+    sem,
+    sgpa,
+    cgpa
   };
 
-  let students = JSON.parse(localStorage.getItem("students")) || [];
+  const students = JSON.parse(localStorage.getItem("students")) || [];
   students.push(student);
   localStorage.setItem("students", JSON.stringify(students));
+
+  // clear inputs (if present)
+  ["studentName","studentRoll","studentBranch","studentYear","studentSem","studentSGPA","studentCGPA"]
+    .forEach(id => { const el = document.getElementById(id); if (el) el.value = ""; });
+
   displayStudents();
 }
 
-// Display Students
+// ---------- Display Students (both leaderboard and admin table) ----------
 function displayStudents() {
-  let students = JSON.parse(localStorage.getItem("students")) || [];
-  let table = document.querySelector("#leaderboardTable tbody") || document.querySelector("#adminStudentTable tbody");
-  if (!table) return;
+  const students = JSON.parse(localStorage.getItem("students")) || [];
+  // sort copy by numeric CGPA descending (coerce to number safely)
+  const sorted = students.slice().sort((a,b) => (parseFloat(b.cgpa) || 0) - (parseFloat(a.cgpa) || 0));
 
-  table.innerHTML = "";
-  students.sort((a, b) => b.cgpa - a.cgpa).forEach((s, i) => {
-    let row = `<tr>
-      <td>${i+1}</td><td>${s.name}</td><td>${s.roll}</td>
-      <td>${s.branch}</td><td>${s.year}</td><td>${s.sem}</td>
-      <td>${s.sgpa}</td><td>${s.cgpa}</td>
-      ${table.id === "adminStudentTable" ? `<td><button onclick="deleteStudent(${i})">Delete</button></td>` : ""}
-    </tr>`;
-    table.innerHTML += row;
-  });
+  const leaderboardTbody = document.querySelector("#leaderboardTable tbody");
+  const adminTbody = document.querySelector("#adminStudentTable tbody");
+
+  if (leaderboardTbody) {
+    leaderboardTbody.innerHTML = "";
+    sorted.forEach((s, i) => {
+      const row = `<tr>
+        <td>${i + 1}</td>
+        <td>${escapeHtml(s.name)}</td>
+        <td>${escapeHtml(s.roll)}</td>
+        <td>${escapeHtml(s.branch)}</td>
+        <td>${escapeHtml(s.year)}</td>
+        <td>${escapeHtml(s.sem)}</td>
+        <td>${escapeHtml(s.sgpa)}</td>
+        <td>${escapeHtml(s.cgpa)}</td>
+      </tr>`;
+      leaderboardTbody.insertAdjacentHTML("beforeend", row);
+    });
+  }
+
+  if (adminTbody) {
+    adminTbody.innerHTML = "";
+    sorted.forEach((s, i) => {
+      const row = `<tr>
+        <td>${i + 1}</td>
+        <td>${escapeHtml(s.name)}</td>
+        <td>${escapeHtml(s.roll)}</td>
+        <td>${escapeHtml(s.branch)}</td>
+        <td>${escapeHtml(s.year)}</td>
+        <td>${escapeHtml(s.sem)}</td>
+        <td>${escapeHtml(s.sgpa)}</td>
+        <td>${escapeHtml(s.cgpa)}</td>
+        <td><button onclick="deleteStudentById(${s.id})">Delete</button></td>
+      </tr>`;
+      adminTbody.insertAdjacentHTML("beforeend", row);
+    });
+  }
 }
-function deleteStudent(index) {
-  let students = JSON.parse(localStorage.getItem("students")) || [];
-  students.splice(index, 1);
+
+// ---------- Delete student by unique id ----------
+function deleteStudentById(id) {
+  const students = JSON.parse(localStorage.getItem("students")) || [];
+  const idx = students.findIndex(s => s.id === id);
+  if (idx === -1) return;
+  if (!confirm("Delete this student?")) return;
+  students.splice(idx, 1);
   localStorage.setItem("students", JSON.stringify(students));
   displayStudents();
 }
 
-// Add Event
+// ---------- Events ----------
 function addEvent() {
-  let event = document.getElementById("eventText").value;
-  let events = JSON.parse(localStorage.getItem("events")) || [];
-  events.push(event);
+  const text = (document.getElementById("eventText")?.value || "").trim();
+  if (!text) return;
+  const events = JSON.parse(localStorage.getItem("events")) || [];
+  events.push({ id: Date.now(), text });
   localStorage.setItem("events", JSON.stringify(events));
+  const el = document.getElementById("eventText"); if (el) el.value = "";
   displayEvents();
 }
 function displayEvents() {
-  let events = JSON.parse(localStorage.getItem("events")) || [];
-  let marquee = document.getElementById("eventsMarquee");
-  if (marquee) marquee.innerText = events.join(" • ");
-}
-
-// Study Materials
-function addMaterial() {
-  let title = document.getElementById("materialText").value;
-  let link = document.getElementById("materialLink").value;
-  let materials = JSON.parse(localStorage.getItem("materials")) || [];
-  materials.push({title, link});
-  localStorage.setItem("materials", JSON.stringify(materials));
-  displayMaterials();
-}
-function displayMaterials() {
-  let materials = JSON.parse(localStorage.getItem("materials")) || [];
-  let list = document.getElementById("materialsList");
-  if (!list) return;
-  list.innerHTML = "";
-  materials.forEach(m => {
-    list.innerHTML += `<li><a href="${m.link}" target="_blank">${m.title}</a></li>`;
+  const events = JSON.parse(localStorage.getItem("events")) || [];
+  const joined = events.map(e => e.text || e).join(" • ");
+  // update multiple possible selectors so both admin & dashboard get updated
+  document.querySelectorAll("#eventsMarquee, .eventsMarquee, #events, .events").forEach(el => {
+    el.innerText = joined;
   });
 }
 
-// Change Password
+// (Optional) delete event function for admin
+function deleteEventById(id) {
+  const events = JSON.parse(localStorage.getItem("events")) || [];
+  const idx = events.findIndex(e => e.id === id);
+  if (idx === -1) return;
+  if (!confirm("Delete this event?")) return;
+  events.splice(idx,1);
+  localStorage.setItem("events", JSON.stringify(events));
+  displayEvents();
+}
+
+// ---------- Study Materials ----------
+function addMaterial() {
+  const title = (document.getElementById("materialText")?.value || "").trim();
+  const link = (document.getElementById("materialLink")?.value || "").trim();
+  if (!title || !link) {
+    alert("Please provide both title and link.");
+    return;
+  }
+  const materials = JSON.parse(localStorage.getItem("materials")) || [];
+  materials.push({ id: Date.now(), title, link });
+  localStorage.setItem("materials", JSON.stringify(materials));
+
+  document.getElementById("materialText").value = "";
+  document.getElementById("materialLink").value = "";
+  displayMaterials();
+}
+function displayMaterials() {
+  const materials = JSON.parse(localStorage.getItem("materials")) || [];
+  // update multiple possible list containers
+  document.querySelectorAll("#materialsList, .materialsList, #studyMaterials, .study-materials").forEach(list => {
+    if (!list) return;
+    list.innerHTML = "";
+    materials.forEach(m => {
+      const li = document.createElement("li");
+      const a = document.createElement("a");
+      a.href = m.link;
+      a.target = "_blank";
+      a.rel = "noopener noreferrer";
+      a.textContent = m.title;
+      li.appendChild(a);
+      list.appendChild(li);
+    });
+  });
+}
+
+// ---------- Change Password ----------
 function changePassword() {
-  let oldPass = document.getElementById("oldPassword").value;
-  let newPass = document.getElementById("newPassword").value;
-  let storedPass = localStorage.getItem("adminPassword");
+  const oldPass = (document.getElementById("oldPassword")?.value || "").trim();
+  const newPass = (document.getElementById("newPassword")?.value || "").trim();
+  const storedPass = localStorage.getItem("adminPassword");
+  const msgEl = document.getElementById("passwordMessage");
   if (oldPass === storedPass) {
     localStorage.setItem("adminPassword", newPass);
-    document.getElementById("passwordMessage").innerText = "✅ Password changed successfully";
+    if (msgEl) msgEl.innerText = "✅ Password changed successfully";
   } else {
-    document.getElementById("passwordMessage").innerText = "❌ Wrong old password";
+    if (msgEl) msgEl.innerText = "❌ Wrong old password";
   }
 }
 
-// Auto-load on pages
+// ---------- Auto-load on pages ----------
 window.onload = () => {
   displayStudents();
   displayEvents();
   displayMaterials();
 };
+
+
+
