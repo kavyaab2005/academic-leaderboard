@@ -1,32 +1,59 @@
-// script.js — full replacement (students + events + materials)
 "use strict";
 
 const DEBUG = true;
-function log(...args){ if (DEBUG) console.log("[script.js]", ...args); }
+function log(...args) { if (DEBUG) console.log("[script.js]", ...args); }
 
-function escapeHtml(text){
+function escapeHtml(text) {
   return String(text || "")
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+// ===== Admin Login =====
+let isAdminLoggedIn = false;
+
+function checkAdminLogin() {
+  // Check if admin is logged in (you can also implement this with sessions or cookies)
+  const adminStatus = localStorage.getItem("isAdmin") === "1";
+  return adminStatus;
+}
+
+function loginAdmin(username, password) {
+  // Hardcoded credentials (in a real scenario, use a secure backend system)
+  if (username === "admin" && password === "password123") {
+    localStorage.setItem("isAdmin", "1");
+    isAdminLoggedIn = true;
+    alert("Admin logged in successfully.");
+    displayAdminInterface();
+  } else {
+    alert("Invalid credentials");
+  }
+}
+
+function logoutAdmin() {
+  localStorage.setItem("isAdmin", "0");
+  isAdminLoggedIn = false;
+  alert("Admin logged out.");
+  displayPublicInterface();
 }
 
 // ===== Helpers =====
-function generateId(prefix="id"){
-  return prefix + "_" + Date.now() + "_" + Math.floor(Math.random()*10000);
+function generateId(prefix = "id") {
+  return prefix + "_" + Date.now() + "_" + Math.floor(Math.random() * 10000);
 }
 
-function isAdmin(){
-  return localStorage.getItem("isAdmin") === "1";
+function isAdmin() {
+  return isAdminLoggedIn || checkAdminLogin();
 }
 
 // ===== STUDENTS =====
-function loadStudents(){ return JSON.parse(localStorage.getItem("students")||"[]"); }
-function saveStudents(arr){ localStorage.setItem("students", JSON.stringify(arr)); }
+function loadStudents() { return JSON.parse(localStorage.getItem("students") || "[]"); }
+function saveStudents(arr) { localStorage.setItem("students", JSON.stringify(arr)); }
 
-function getBadgeForRank(i){
+function getBadgeForRank(i) {
   if (i === 0) return "🥇";
   if (i === 1) return "🥈";
   if (i === 2) return "🥉";
@@ -34,7 +61,7 @@ function getBadgeForRank(i){
   return "";
 }
 
-function addStudent(student){
+function addStudent(student) {
   if (!isAdmin()) return alert("Only admin can add!");
   const students = loadStudents();
   student.id = generateId("s");
@@ -42,29 +69,33 @@ function addStudent(student){
   saveStudents(students);
   displayStudents();
 }
-function deleteStudentById(id){
+
+function deleteStudentById(id) {
   if (!isAdmin()) return;
   let students = loadStudents().filter(s => s.id !== id);
   saveStudents(students);
   displayStudents();
 }
-function displayStudents(){
+
+function displayStudents() {
   const students = loadStudents();
-  const sorted = students.slice().sort((a,b)=> (parseFloat(b.cgpa)||0)-(parseFloat(a.cgpa)||0));
+  const sorted = students.slice().sort((a, b) => (parseFloat(b.cgpa) || 0) - (parseFloat(a.cgpa) || 0));
 
   // public leaderboard
   const tbody = document.querySelector("#leaderboardTable tbody");
-  if (tbody){
+  if (tbody) {
     tbody.innerHTML = "";
-    sorted.forEach((s,i)=>{
+    sorted.forEach((s, i) => {
       const tr = document.createElement("tr");
       const tdName = document.createElement("td");
       const badge = getBadgeForRank(i);
-      if (badge){ tdName.innerHTML = `<span class="student-badge">${badge}</span> `; }
+      if (badge) { tdName.innerHTML = `<span class="student-badge">${badge}</span> `; }
       tdName.appendChild(document.createTextNode(s.name));
       tr.appendChild(tdName);
-      ["roll","branch","year","sem","sgpa","cgpa"].forEach(k=>{
-        const td=document.createElement("td"); td.textContent=s[k]; tr.appendChild(td);
+      ["roll", "branch", "year", "sem", "sgpa", "cgpa"].forEach(k => {
+        const td = document.createElement("td");
+        td.textContent = s[k];
+        tr.appendChild(td);
       });
       tbody.appendChild(tr);
     });
@@ -72,12 +103,12 @@ function displayStudents(){
 
   // admin table
   const adminTbody = document.querySelector("#adminStudentTable tbody");
-  if (adminTbody && isAdmin()){
+  if (adminTbody && isAdmin()) {
     adminTbody.innerHTML = "";
-    sorted.forEach((s,i)=>{
-      const tr=document.createElement("tr");
+    sorted.forEach((s, i) => {
+      const tr = document.createElement("tr");
       tr.innerHTML = `
-        <td>${i+1}</td>
+        <td>${i + 1}</td>
         <td>${s.name}</td>
         <td>${s.roll}</td>
         <td>${s.branch}</td>
@@ -86,10 +117,10 @@ function displayStudents(){
         <td>${s.sgpa}</td>
         <td>${s.cgpa}</td>
       `;
-      const tdAct=document.createElement("td");
-      const del=document.createElement("button");
-      del.textContent="🗑 Delete";
-      del.onclick=()=>deleteStudentById(s.id);
+      const tdAct = document.createElement("td");
+      const del = document.createElement("button");
+      del.textContent = "🗑 Delete";
+      del.onclick = () => deleteStudentById(s.id);
       tdAct.appendChild(del);
       tr.appendChild(tdAct);
       adminTbody.appendChild(tr);
@@ -98,38 +129,40 @@ function displayStudents(){
 }
 
 // ===== EVENTS =====
-function loadEvents(){ return JSON.parse(localStorage.getItem("events")||"[]"); }
-function saveEvents(arr){ localStorage.setItem("events", JSON.stringify(arr)); }
+function loadEvents() { return JSON.parse(localStorage.getItem("events") || "[]"); }
+function saveEvents(arr) { localStorage.setItem("events", JSON.stringify(arr)); }
 
-function addEvent(text){
+function addEvent(text) {
   if (!isAdmin()) return alert("Only admin can add!");
-  const events=loadEvents();
-  events.push({id:generateId("e"), text});
+  const events = loadEvents();
+  events.push({ id: generateId("e"), text });
   saveEvents(events);
   displayEvents();
 }
-function deleteEventById(id){
+
+function deleteEventById(id) {
   if (!isAdmin()) return;
-  saveEvents(loadEvents().filter(e=>e.id!==id));
+  saveEvents(loadEvents().filter(e => e.id !== id));
   displayEvents();
 }
-function displayEvents(){
-  const events=loadEvents();
+
+function displayEvents() {
+  const events = loadEvents();
 
   // public marquee
-  const marquee=document.querySelector("#eventsMarquee");
-  if (marquee) marquee.textContent=events.map(e=>e.text).join(" • ");
+  const marquee = document.querySelector("#eventsMarquee");
+  if (marquee) marquee.textContent = events.map(e => e.text).join(" • ");
 
   // admin list
-  const adminList=document.querySelector("#adminEventsList");
-  if (adminList && isAdmin()){
-    adminList.innerHTML="";
-    events.forEach(ev=>{
-      const li=document.createElement("li");
-      li.textContent=ev.text+" ";
-      const del=document.createElement("button");
-      del.textContent="🗑 Delete";
-      del.onclick=()=>deleteEventById(ev.id);
+  const adminList = document.querySelector("#adminEventsList");
+  if (adminList && isAdmin()) {
+    adminList.innerHTML = "";
+    events.forEach(ev => {
+      const li = document.createElement("li");
+      li.textContent = ev.text + " ";
+      const del = document.createElement("button");
+      del.textContent = "🗑 Delete";
+      del.onclick = () => deleteEventById(ev.id);
       li.appendChild(del);
       adminList.appendChild(li);
     });
@@ -137,49 +170,55 @@ function displayEvents(){
 }
 
 // ===== MATERIALS =====
-function loadMaterials(){ return JSON.parse(localStorage.getItem("materials")||"[]"); }
-function saveMaterials(arr){ localStorage.setItem("materials", JSON.stringify(arr)); }
+function loadMaterials() { return JSON.parse(localStorage.getItem("materials") || "[]"); }
+function saveMaterials(arr) { localStorage.setItem("materials", JSON.stringify(arr)); }
 
-function addMaterial(title, link){
+function addMaterial(title, link) {
   if (!isAdmin()) return alert("Only admin can add!");
-  const mats=loadMaterials();
-  mats.push({id:generateId("m"), title, link});
+  const mats = loadMaterials();
+  mats.push({ id: generateId("m"), title, link });
   saveMaterials(mats);
   displayMaterials();
 }
-function deleteMaterialById(id){
+
+function deleteMaterialById(id) {
   if (!isAdmin()) return;
-  saveMaterials(loadMaterials().filter(m=>m.id!==id));
+  saveMaterials(loadMaterials().filter(m => m.id !== id));
   displayMaterials();
 }
-function displayMaterials(){
-  const mats=loadMaterials();
+
+function displayMaterials() {
+  const mats = loadMaterials();
 
   // public list
-  const list=document.querySelector("#materialsList");
-  if (list){
-    list.innerHTML="";
-    mats.forEach(m=>{
-      const li=document.createElement("li");
-      const a=document.createElement("a");
-      a.href=m.link; a.target="_blank"; a.textContent=m.title;
+  const list = document.querySelector("#materialsList");
+  if (list) {
+    list.innerHTML = "";
+    mats.forEach(m => {
+      const li = document.createElement("li");
+      const a = document.createElement("a");
+      a.href = m.link;
+      a.target = "_blank";
+      a.textContent = m.title;
       li.appendChild(a);
       list.appendChild(li);
     });
   }
 
   // admin list
-  const adminList=document.querySelector("#adminMaterialsList");
-  if (adminList && isAdmin()){
-    adminList.innerHTML="";
-    mats.forEach(m=>{
-      const li=document.createElement("li");
-      const a=document.createElement("a");
-      a.href=m.link; a.target="_blank"; a.textContent=m.title;
+  const adminList = document.querySelector("#adminMaterialsList");
+  if (adminList && isAdmin()) {
+    adminList.innerHTML = "";
+    mats.forEach(m => {
+      const li = document.createElement("li");
+      const a = document.createElement("a");
+      a.href = m.link;
+      a.target = "_blank";
+      a.textContent = m.title;
       li.appendChild(a);
-      const del=document.createElement("button");
-      del.textContent="🗑 Delete";
-      del.onclick=()=>deleteMaterialById(m.id);
+      const del = document.createElement("button");
+      del.textContent = "🗑 Delete";
+      del.onclick = () => deleteMaterialById(m.id);
       li.appendChild(del);
       adminList.appendChild(li);
     });
@@ -187,8 +226,39 @@ function displayMaterials(){
 }
 
 // ===== Init =====
-window.addEventListener("DOMContentLoaded", ()=>{
+window.addEventListener("DOMContentLoaded", () => {
+  // Check if admin is logged in
+  if (isAdmin()) {
+    displayAdminInterface();
+  } else {
+    displayPublicInterface();
+  }
+
   displayStudents();
   displayEvents();
   displayMaterials();
+});
+
+// Show Admin Interface
+function displayAdminInterface() {
+  document.querySelector("#adminPanel").style.display = "block"; // Make admin panel visible
+  document.querySelector("#loginPanel").style.display = "none"; // Hide login panel
+}
+
+// Show Public Interface
+function displayPublicInterface() {
+  document.querySelector("#adminPanel").style.display = "none"; // Hide admin panel
+  document.querySelector("#loginPanel").style.display = "block"; // Show login panel
+}
+
+// Login Button
+document.querySelector("#loginButton").addEventListener("click", () => {
+  const username = document.querySelector("#usernameInput").value;
+  const password = document.querySelector("#passwordInput").value;
+  loginAdmin(username, password);
+});
+
+// Logout Button
+document.querySelector("#logoutButton").addEventListener("click", () => {
+  logoutAdmin();
 });
