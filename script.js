@@ -1,7 +1,7 @@
-  if (i === 1) return "🥈";
-  if (i === 2) return "🥉";
-  if (i === 3 || i === 4) return "🏅";
-  return "";
+if (i === 1) return "🥈";
+if (i === 2) return "🥉";
+if (i === 3 || i === 4) return "🏅";
+return "";
 }
 
 function displayStudents(){
@@ -10,20 +10,35 @@ function displayStudents(){
 
   // public leaderboard
   const leaderboardTbody = document.querySelector("#leaderboardTable tbody");
+  if (leaderboardTbody) {
+    leaderboardTbody.innerHTML = "";
+
+    sorted.forEach((s,i) => {
+      const tr = document.createElement("tr");
+
+      const tdName = document.createElement("td");
+      const badge = getBadgeForRank(i);
+
       if (badge) {
         const span = document.createElement("span");
         span.className = "student-badge";
         span.textContent = badge + " ";
         tdName.appendChild(span);
       }
+
       tdName.appendChild(document.createTextNode(escapeHtml(s.name)));
       tr.appendChild(tdName);
+
       // other columns
       ["roll","branch","year","sem","sgpa","cgpa"].forEach(key=>{
-        const td = document.createElement("td"); td.textContent = escapeHtml(s[key]); tr.appendChild(td);
+        const td = document.createElement("td");
+        td.textContent = escapeHtml(s[key]);
+        tr.appendChild(td);
       });
+
       leaderboardTbody.appendChild(tr);
     });
+
     log("Leaderboard rendered, count:", sorted.length);
   }
 
@@ -33,26 +48,39 @@ function displayStudents(){
     adminTbody.innerHTML = "";
     sorted.forEach((s,i) => {
       const tr = document.createElement("tr");
-      const tdRank = document.createElement("td"); tdRank.textContent = i+1; tr.appendChild(tdRank);
+      const tdRank = document.createElement("td"); 
+      tdRank.textContent = i+1; 
+      tr.appendChild(tdRank);
+
       const tdName = document.createElement("td");
       const badge = getBadgeForRank(i);
+
       if (badge) {
         const span = document.createElement("span");
         span.className = "student-badge";
         span.textContent = badge + " ";
         tdName.appendChild(span);
       }
-      tdName.appendChild(document.createTextNode(escapeHtml(s.name))); tr.appendChild(tdName);
+
+      tdName.appendChild(document.createTextNode(escapeHtml(s.name))); 
+      tr.appendChild(tdName);
+
       ["roll","branch","year","sem","sgpa","cgpa"].forEach(key=>{
-        const td = document.createElement("td"); td.textContent = escapeHtml(s[key]); tr.appendChild(td);
+        const td = document.createElement("td"); 
+        td.textContent = escapeHtml(s[key]); 
+        tr.appendChild(td);
       });
+
       const tdAction = document.createElement("td");
       const del = document.createElement("button");
       del.type = "button";
       del.textContent = "🗑 Delete";
-      del.onclick = () => { if(confirm("Delete this student?")) deleteStudentById(s.id); };
+      del.onclick = () => { 
+        if(confirm("Delete this student?")) deleteStudentById(s.id); 
+      };
       tdAction.appendChild(del);
       tr.appendChild(tdAction);
+
       adminTbody.appendChild(tr);
     });
     log("Admin student table rendered, count:", sorted.length);
@@ -60,5 +88,5 @@ function displayStudents(){
 }
 
 function deleteStudentById(id){
-
-
+  // your existing delete logic here
+}
