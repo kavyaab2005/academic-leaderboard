@@ -1,4 +1,4 @@
-// script.js — full replacement (copy-paste)
+// script.js — full replacement (students + events + materials)
 "use strict";
 
 const DEBUG = true;
@@ -13,6 +13,19 @@ function escapeHtml(text){
     .replace(/'/g,"&#039;");
 }
 
+// ===== Helpers =====
+function generateId(prefix="id"){
+  return prefix + "_" + Date.now() + "_" + Math.floor(Math.random()*10000);
+}
+
+function isAdmin(){
+  return localStorage.getItem("isAdmin") === "1";
+}
+
+// ===== STUDENTS =====
+function loadStudents(){ return JSON.parse(localStorage.getItem("students")||"[]"); }
+function saveStudents(arr){ localStorage.setItem("students", JSON.stringify(arr)); }
+
 function getBadgeForRank(i){
   if (i === 0) return "🥇";
   if (i === 1) return "🥈";
@@ -21,186 +34,161 @@ function getBadgeForRank(i){
   return "";
 }
 
-function loadStudents(){
-  try {
-    return JSON.parse(localStorage.getItem("students")) || [];
-  } catch (e) {
-    console.error("Failed to parse students from localStorage:", e);
-    return [];
-  }
-}
-function saveStudents(arr){
-  localStorage.setItem("students", JSON.stringify(arr));
-}
-function generateId(){
-  return "s_" + Date.now() + "_" + Math.floor(Math.random()*10000);
-}
-
-function deleteStudentById(id){
-  const students = loadStudents();
-  const idx = students.findIndex(s => s.id == id);
-  if (idx === -1) {
-    log("deleteStudentById: id not found", id);
-    return false;
-  }
-  students.splice(idx, 1);
-  saveStudents(students);
-  displayStudents();
-  log("Deleted student id:", id);
-  return true;
-}
-
 function addStudent(student){
+  if (!isAdmin()) return alert("Only admin can add!");
   const students = loadStudents();
-  student.id = student.id || generateId();
+  student.id = generateId("s");
   students.push(student);
   saveStudents(students);
   displayStudents();
-  return student.id;
 }
-
-function displayStudents(){
-  try {
-    const students = loadStudents();
-    const sorted = students.slice().sort((a,b) => (parseFloat(b.cgpa)||0) - (parseFloat(a.cgpa)||0));
-
-    // --- Public leaderboard ---
-    const leaderboardTbody = document.querySelector("#leaderboardTable tbody");
-    if (leaderboardTbody) {
-      leaderboardTbody.innerHTML = "";
-      sorted.forEach((s, i) => {
-        const tr = document.createElement("tr");
-
-        const tdName = document.createElement("td");
-        const badge = getBadgeForRank(i);
-        if (badge) {
-          const span = document.createElement("span");
-          span.className = "student-badge";
-          span.textContent = badge + " ";
-          tdName.appendChild(span);
-        }
-        tdName.appendChild(document.createTextNode(escapeHtml(s.name || "")));
-        tr.appendChild(tdName);
-
-        ["roll","branch","year","sem","sgpa","cgpa"].forEach(key=>{
-          const td = document.createElement("td");
-          td.textContent = escapeHtml(s[key] || "");
-          tr.appendChild(td);
-        });
-
-        leaderboardTbody.appendChild(tr);
-      });
-      log("Leaderboard rendered, count:", sorted.length);
-    } else {
-      log("No #leaderboardTable tbody found on page");
-    }
-
-    // --- Admin table (with delete) ---
-    const adminTbody = document.querySelector("#adminStudentTable tbody");
-    // IS_ADMIN determination: presence of #adminPanel or query/admin flag or localStorage flag
-    window.IS_ADMIN = !!(document.querySelector("#adminPanel") || location.search.includes("admin=1") || localStorage.getItem("isAdmin") === "1");
-
-    if (adminTbody && window.IS_ADMIN) {
-      adminTbody.innerHTML = "";
-      sorted.forEach((s, i) => {
-        const tr = document.createElement("tr");
-
-        const tdRank = document.createElement("td");
-        tdRank.textContent = i + 1;
-        tr.appendChild(tdRank);
-
-        const tdName = document.createElement("td");
-        const badge = getBadgeForRank(i);
-        if (badge) {
-          const span = document.createElement("span");
-          span.className = "student-badge";
-          span.textContent = badge + " ";
-          tdName.appendChild(span);
-        }
-        tdName.appendChild(document.createTextNode(escapeHtml(s.name || "")));
-        tr.appendChild(tdName);
-
-        ["roll","branch","year","sem","sgpa","cgpa"].forEach(key=>{
-          const td = document.createElement("td");
-          td.textContent = escapeHtml(s[key] || "");
-          tr.appendChild(td);
-        });
-
-        const tdAction = document.createElement("td");
-        const del = document.createElement("button");
-        del.type = "button";
-        del.textContent = "🗑 Delete";
-        del.onclick = () => {
-          if (confirm("Delete this student?")) deleteStudentById(s.id);
-        };
-        tdAction.appendChild(del);
-        tr.appendChild(tdAction);
-
-        adminTbody.appendChild(tr);
-      });
-      log("Admin student table rendered, count:", sorted.length);
-    } else {
-      log("Admin table skipped (either no #adminStudentTable tbody or not admin)");
-    }
-  } catch (err) {
-    console.error("displayStudents() failed:", err);
-  }
-}
-
-// Attach admin form (if present) to add students
-function attachAdminForm(){
-  const form = document.querySelector("#adminForm");
-  if (!form) {
-    log("No #adminForm found (skipping form hook)");
-    return;
-  }
-  form.addEventListener("submit", (ev) => {
-    ev.preventDefault();
-    const fd = new FormData(form);
-    const student = {
-      name: fd.get("name") || "",
-      roll: fd.get("roll") || "",
-      branch: fd.get("branch") || "",
-      year: fd.get("year") || "",
-      sem: fd.get("sem") || "",
-      sgpa: fd.get("sgpa") || "",
-      cgpa: fd.get("cgpa") || ""
-    };
-    addStudent(student);
-    form.reset();
-  });
-}
-
-// helpful debug/demo data insertion (only runs once if DEBUG and no students exist)
-function seedDemoDataIfNeeded(){
-  try {
-    const students = loadStudents();
-    if (students.length === 0 && DEBUG && !localStorage.getItem("students_demo_seeded")) {
-      const demo = [
-        { name:"Asha", roll:"101", branch:"CSE", year:"2", sem:"4", sgpa:"9.1", cgpa:"8.6" },
-        { name:"Balu", roll:"102", branch:"CSE", year:"2", sem:"4", sgpa:"8.9", cgpa:"8.4" },
-        { name:"Charu", roll:"103", branch:"ECE", year:"2", sem:"4", sgpa:"8.7", cgpa:"8.2" },
-        { name:"Dinesh", roll:"104", branch:"ME", year:"2", sem:"4", sgpa:"8.5", cgpa:"7.9" }
-      ];
-      demo.forEach(s => { s.id = generateId(); });
-      saveStudents(demo);
-      localStorage.setItem("students_demo_seeded", "1");
-      log("Demo students seeded");
-    }
-  } catch (e) {
-    console.error("seedDemoDataIfNeeded error:", e);
-  }
-}
-
-// global error handler to catch runtime errors quickly
-window.onerror = function(message, source, lineno, colno, error) {
-  console.error("Unhandled error:", message, source, lineno, colno, error);
-  // show a small alert so you know something crashed — check console for full trace
-  alert("Script error: " + message + "\nOpen browser console for details.");
-};
-
-window.addEventListener("DOMContentLoaded", () => {
-  seedDemoDataIfNeeded();
-  attachAdminForm();
+function deleteStudentById(id){
+  if (!isAdmin()) return;
+  let students = loadStudents().filter(s => s.id !== id);
+  saveStudents(students);
   displayStudents();
+}
+function displayStudents(){
+  const students = loadStudents();
+  const sorted = students.slice().sort((a,b)=> (parseFloat(b.cgpa)||0)-(parseFloat(a.cgpa)||0));
+
+  // public leaderboard
+  const tbody = document.querySelector("#leaderboardTable tbody");
+  if (tbody){
+    tbody.innerHTML = "";
+    sorted.forEach((s,i)=>{
+      const tr = document.createElement("tr");
+      const tdName = document.createElement("td");
+      const badge = getBadgeForRank(i);
+      if (badge){ tdName.innerHTML = `<span class="student-badge">${badge}</span> `; }
+      tdName.appendChild(document.createTextNode(s.name));
+      tr.appendChild(tdName);
+      ["roll","branch","year","sem","sgpa","cgpa"].forEach(k=>{
+        const td=document.createElement("td"); td.textContent=s[k]; tr.appendChild(td);
+      });
+      tbody.appendChild(tr);
+    });
+  }
+
+  // admin table
+  const adminTbody = document.querySelector("#adminStudentTable tbody");
+  if (adminTbody && isAdmin()){
+    adminTbody.innerHTML = "";
+    sorted.forEach((s,i)=>{
+      const tr=document.createElement("tr");
+      tr.innerHTML = `
+        <td>${i+1}</td>
+        <td>${s.name}</td>
+        <td>${s.roll}</td>
+        <td>${s.branch}</td>
+        <td>${s.year}</td>
+        <td>${s.sem}</td>
+        <td>${s.sgpa}</td>
+        <td>${s.cgpa}</td>
+      `;
+      const tdAct=document.createElement("td");
+      const del=document.createElement("button");
+      del.textContent="🗑 Delete";
+      del.onclick=()=>deleteStudentById(s.id);
+      tdAct.appendChild(del);
+      tr.appendChild(tdAct);
+      adminTbody.appendChild(tr);
+    });
+  }
+}
+
+// ===== EVENTS =====
+function loadEvents(){ return JSON.parse(localStorage.getItem("events")||"[]"); }
+function saveEvents(arr){ localStorage.setItem("events", JSON.stringify(arr)); }
+
+function addEvent(text){
+  if (!isAdmin()) return alert("Only admin can add!");
+  const events=loadEvents();
+  events.push({id:generateId("e"), text});
+  saveEvents(events);
+  displayEvents();
+}
+function deleteEventById(id){
+  if (!isAdmin()) return;
+  saveEvents(loadEvents().filter(e=>e.id!==id));
+  displayEvents();
+}
+function displayEvents(){
+  const events=loadEvents();
+
+  // public marquee
+  const marquee=document.querySelector("#eventsMarquee");
+  if (marquee) marquee.textContent=events.map(e=>e.text).join(" • ");
+
+  // admin list
+  const adminList=document.querySelector("#adminEventsList");
+  if (adminList && isAdmin()){
+    adminList.innerHTML="";
+    events.forEach(ev=>{
+      const li=document.createElement("li");
+      li.textContent=ev.text+" ";
+      const del=document.createElement("button");
+      del.textContent="🗑 Delete";
+      del.onclick=()=>deleteEventById(ev.id);
+      li.appendChild(del);
+      adminList.appendChild(li);
+    });
+  }
+}
+
+// ===== MATERIALS =====
+function loadMaterials(){ return JSON.parse(localStorage.getItem("materials")||"[]"); }
+function saveMaterials(arr){ localStorage.setItem("materials", JSON.stringify(arr)); }
+
+function addMaterial(title, link){
+  if (!isAdmin()) return alert("Only admin can add!");
+  const mats=loadMaterials();
+  mats.push({id:generateId("m"), title, link});
+  saveMaterials(mats);
+  displayMaterials();
+}
+function deleteMaterialById(id){
+  if (!isAdmin()) return;
+  saveMaterials(loadMaterials().filter(m=>m.id!==id));
+  displayMaterials();
+}
+function displayMaterials(){
+  const mats=loadMaterials();
+
+  // public list
+  const list=document.querySelector("#materialsList");
+  if (list){
+    list.innerHTML="";
+    mats.forEach(m=>{
+      const li=document.createElement("li");
+      const a=document.createElement("a");
+      a.href=m.link; a.target="_blank"; a.textContent=m.title;
+      li.appendChild(a);
+      list.appendChild(li);
+    });
+  }
+
+  // admin list
+  const adminList=document.querySelector("#adminMaterialsList");
+  if (adminList && isAdmin()){
+    adminList.innerHTML="";
+    mats.forEach(m=>{
+      const li=document.createElement("li");
+      const a=document.createElement("a");
+      a.href=m.link; a.target="_blank"; a.textContent=m.title;
+      li.appendChild(a);
+      const del=document.createElement("button");
+      del.textContent="🗑 Delete";
+      del.onclick=()=>deleteMaterialById(m.id);
+      li.appendChild(del);
+      adminList.appendChild(li);
+    });
+  }
+}
+
+// ===== Init =====
+window.addEventListener("DOMContentLoaded", ()=>{
+  displayStudents();
+  displayEvents();
+  displayMaterials();
 });
