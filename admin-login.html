@@ -6,13 +6,13 @@
   <link rel="stylesheet" href="style.css">
   <script defer src="script.js"></script>
   <script>
-    // handle admin login
+    const ADMIN_PASSWORD = "1176"; // set your real password here
+
     function adminLogin() {
       const inputPass = document.getElementById("adminPassword").value.trim();
-      const stored = localStorage.getItem("adminPassword") || "1176"; // default
-      if (inputPass === stored) {
-        localStorage.setItem("isLoggedInAdmin", "true"); // session flag
-        window.location.href = "admin-dashboard.html";   // redirect to dashboard
+      if (inputPass === ADMIN_PASSWORD) {
+        localStorage.setItem("isAdmin", "1"); // consistent with script.js
+        window.location.href = "admin-dashboard.html"; // go to dashboard
       } else {
         document.getElementById("loginMessage").innerText = "❌ Wrong password!";
       }
