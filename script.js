@@ -1,4 +1,4 @@
-"use strict";
+ "use strict";
 
 const DEBUG = true;
 function log(...args) { if (DEBUG) console.log("[script.js]", ...args); }
@@ -13,40 +13,30 @@ function escapeHtml(text) {
 }
 
 // ===== Admin Login =====
-let isAdminLoggedIn = false;
-
-function checkAdminLogin() {
-  // Check if admin is logged in (you can also implement this with sessions or cookies)
-  const adminStatus = localStorage.getItem("isAdmin") === "1";
-  return adminStatus;
+function isAdmin() {
+  return localStorage.getItem("isAdmin") === "1";
 }
 
 function loginAdmin(username, password) {
-  // Hardcoded credentials (in a real scenario, use a secure backend system)
+  // Hardcoded credentials (replace with secure backend in production)
   if (username === "admin" && password === "password123") {
     localStorage.setItem("isAdmin", "1");
-    isAdminLoggedIn = true;
-    alert("Admin logged in successfully.");
+    alert("✅ Admin logged in successfully.");
     displayAdminInterface();
   } else {
-    alert("Invalid credentials");
+    alert("❌ Invalid credentials");
   }
 }
 
 function logoutAdmin() {
-  localStorage.setItem("isAdmin", "0");
-  isAdminLoggedIn = false;
-  alert("Admin logged out.");
+  localStorage.removeItem("isAdmin");
+  alert("✅ Admin logged out.");
   displayPublicInterface();
 }
 
 // ===== Helpers =====
 function generateId(prefix = "id") {
   return prefix + "_" + Date.now() + "_" + Math.floor(Math.random() * 10000);
-}
-
-function isAdmin() {
-  return isAdminLoggedIn || checkAdminLogin();
 }
 
 // ===== STUDENTS =====
@@ -62,7 +52,7 @@ function getBadgeForRank(i) {
 }
 
 function addStudent(student) {
-  if (!isAdmin()) return alert("Only admin can add!");
+  if (!isAdmin()) return alert("❌ Only admin can add!");
   const students = loadStudents();
   student.id = generateId("s");
   students.push(student);
@@ -71,7 +61,7 @@ function addStudent(student) {
 }
 
 function deleteStudentById(id) {
-  if (!isAdmin()) return;
+  if (!isAdmin()) return alert("❌ Only admin can delete!");
   let students = loadStudents().filter(s => s.id !== id);
   saveStudents(students);
   displayStudents();
@@ -133,7 +123,7 @@ function loadEvents() { return JSON.parse(localStorage.getItem("events") || "[]"
 function saveEvents(arr) { localStorage.setItem("events", JSON.stringify(arr)); }
 
 function addEvent(text) {
-  if (!isAdmin()) return alert("Only admin can add!");
+  if (!isAdmin()) return alert("❌ Only admin can add!");
   const events = loadEvents();
   events.push({ id: generateId("e"), text });
   saveEvents(events);
@@ -141,7 +131,7 @@ function addEvent(text) {
 }
 
 function deleteEventById(id) {
-  if (!isAdmin()) return;
+  if (!isAdmin()) return alert("❌ Only admin can delete!");
   saveEvents(loadEvents().filter(e => e.id !== id));
   displayEvents();
 }
@@ -174,7 +164,7 @@ function loadMaterials() { return JSON.parse(localStorage.getItem("materials") |
 function saveMaterials(arr) { localStorage.setItem("materials", JSON.stringify(arr)); }
 
 function addMaterial(title, link) {
-  if (!isAdmin()) return alert("Only admin can add!");
+  if (!isAdmin()) return alert("❌ Only admin can add!");
   const mats = loadMaterials();
   mats.push({ id: generateId("m"), title, link });
   saveMaterials(mats);
@@ -182,7 +172,7 @@ function addMaterial(title, link) {
 }
 
 function deleteMaterialById(id) {
-  if (!isAdmin()) return;
+  if (!isAdmin()) return alert("❌ Only admin can delete!");
   saveMaterials(loadMaterials().filter(m => m.id !== id));
   displayMaterials();
 }
@@ -227,7 +217,6 @@ function displayMaterials() {
 
 // ===== Init =====
 window.addEventListener("DOMContentLoaded", () => {
-  // Check if admin is logged in
   if (isAdmin()) {
     displayAdminInterface();
   } else {
@@ -237,28 +226,34 @@ window.addEventListener("DOMContentLoaded", () => {
   displayStudents();
   displayEvents();
   displayMaterials();
+
+  // Login Button
+  const loginBtn = document.querySelector("#loginButton");
+  if (loginBtn) {
+    loginBtn.addEventListener("click", () => {
+      const username = document.querySelector("#usernameInput").value;
+      const password = document.querySelector("#passwordInput").value;
+      loginAdmin(username, password);
+    });
+  }
+
+  // Logout Button
+  const logoutBtn = document.querySelector("#logoutButton");
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", () => {
+      logoutAdmin();
+    });
+  }
 });
 
 // Show Admin Interface
 function displayAdminInterface() {
-  document.querySelector("#adminPanel").style.display = "block"; // Make admin panel visible
-  document.querySelector("#loginPanel").style.display = "none"; // Hide login panel
+  document.querySelector("#adminPanel").style.display = "block";
+  document.querySelector("#loginPanel").style.display = "none";
 }
 
 // Show Public Interface
 function displayPublicInterface() {
-  document.querySelector("#adminPanel").style.display = "none"; // Hide admin panel
-  document.querySelector("#loginPanel").style.display = "block"; // Show login panel
+  document.querySelector("#adminPanel").style.display = "none";
+  document.querySelector("#loginPanel").style.display = "block";
 }
-
-// Login Button
-document.querySelector("#loginButton").addEventListener("click", () => {
-  const username = document.querySelector("#usernameInput").value;
-  const password = document.querySelector("#passwordInput").value;
-  loginAdmin(username, password);
-});
-
-// Logout Button
-document.querySelector("#logoutButton").addEventListener("click", () => {
-  logoutAdmin();
-});
