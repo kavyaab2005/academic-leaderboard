@@ -3,17 +3,8 @@
 const DEBUG = true;
 function log(...args) { if (DEBUG) console.log("[script.js]", ...args); }
 
-function escapeHtml(text) {
-  return String(text || "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-}
-
-// ===== Admin Login =====
-const ADMIN_PASSWORD = "password123"; // Change this for your admin password
+// ===== Admin Config =====
+const ADMIN_PASSWORD = "password123"; // change to your real password
 
 function isAdmin() {
   return localStorage.getItem("isAdmin") === "1";
@@ -26,6 +17,7 @@ function loginAdmin(password) {
     displayAdminInterface();
   } else {
     alert("❌ Invalid password");
+    displayPublicInterface();
   }
 }
 
@@ -218,24 +210,22 @@ function displayMaterials() {
 
 // ===== Init =====
 window.addEventListener("DOMContentLoaded", () => {
-  if (isAdmin()) {
-    displayAdminInterface();
+  if (!isAdmin()) {
+    const pwd = prompt("Enter Admin Password:");
+    if (pwd === ADMIN_PASSWORD) {
+      localStorage.setItem("isAdmin", "1");
+      displayAdminInterface();
+    } else {
+      alert("❌ Wrong password. Showing public view.");
+      displayPublicInterface();
+    }
   } else {
-    displayPublicInterface();
+    displayAdminInterface();
   }
 
   displayStudents();
   displayEvents();
   displayMaterials();
-
-  // Login Button
-  const loginBtn = document.querySelector("#loginButton");
-  if (loginBtn) {
-    loginBtn.addEventListener("click", () => {
-      const password = document.querySelector("#passwordInput").value;
-      loginAdmin(password);
-    });
-  }
 
   // Logout Button
   const logoutBtn = document.querySelector("#logoutButton");
@@ -257,4 +247,3 @@ function displayPublicInterface() {
   document.querySelector("#adminPanel").style.display = "none";
   document.querySelector("#loginPanel").style.display = "block";
 }
-
