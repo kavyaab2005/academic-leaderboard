@@ -3,71 +3,116 @@
 <head>
   <meta charset="UTF-8">
   <title>Admin Dashboard | VVIT</title>
-  <link rel="stylesheet" href="style.css">
-  <script defer src="script.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    // Gamification state
+    let xp = 0;
+
+    function gainXP(points) {
+      xp += points;
+      document.getElementById("xpPoints").innerText = xp + " XP";
+      const bar = document.getElementById("xpBar");
+      bar.style.width = Math.min(xp, 100) + "%";
+
+      if (xp >= 100) {
+        document.getElementById("badge").classList.remove("hidden");
+      }
+    }
+
+    function logoutAdmin() {
+      localStorage.removeItem("isAdmin");
+      window.location.href = "admin-login.html";
+    }
+  </script>
 </head>
-<body>
-  <header class="header">
-    <h1>⚙️ Admin Dashboard</h1>
+<body class="min-h-screen bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 flex flex-col items-center p-6 text-white font-sans">
+
+  <!-- Header -->
+  <header class="flex w-full justify-between items-center mb-6">
+    <h1 class="text-3xl font-bold">⚙️ Admin Dashboard</h1>
+    <button onclick="logoutAdmin()" 
+      class="px-4 py-2 rounded-xl bg-red-500 hover:bg-red-600 transition">🚪 Logout</button>
   </header>
 
-  <!-- Student Management -->
-  <section class="admin-panel">
-    <h2>👩‍🎓 Manage Students</h2>
-    <input id="studentName" placeholder="Name">
-    <input id="studentRoll" placeholder="Roll">
-    <select id="studentBranch">
-      <option value="CSE">CSE</option>
-      <option value="CSE-AIML">CSE-AIML</option>
-      <option value="AIML">AIML</option>
-    </select>
-    <input id="studentYear" placeholder="Year">
-    <input id="studentSem" placeholder="Semester">
-    <input id="studentSGPA" placeholder="SGPA">
-    <input id="studentCGPA" placeholder="CGPA">
-    <button onclick="addStudent()">Add Student</button>
-    <table id="adminStudentTable">
-      <thead>
-        <tr>
-          <th>Name</th><th>Roll</th><th>Branch</th>
-          <th>Year</th><th>Sem</th><th>SGPA</th><th>CGPA</th><th>Action</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </section>
+  <!-- XP Progress -->
+  <div class="w-full max-w-xl mb-6 p-4 rounded-2xl bg-white/20 backdrop-blur shadow-lg">
+    <h2 class="text-xl mb-2">🏆 Admin Progress</h2>
+    <div class="w-full bg-white/30 rounded-full h-3 mb-2">
+      <div id="xpBar" class="bg-green-400 h-3 rounded-full transition-all duration-500" style="width: 0%"></div>
+    </div>
+    <p id="xpPoints">0 XP</p>
+    <p id="badge" class="hidden mt-2 bg-yellow-300 text-black px-3 py-1 rounded-lg font-bold animate-bounce">🎉 LEVEL UP! You are a Super Admin!</p>
+  </div>
 
-  <!-- Events -->
-  <section class="admin-panel">
-    <h2>📢 Add Upcoming Event</h2>
-    <input id="eventText" placeholder="Event details">
-    <button onclick="addEvent()">Add Event</button>
+  <!-- Panels -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-5xl">
 
-    <!-- Admin Events List -->
-    <h3>📅 Manage Events</h3>
-    <ul id="adminEventsList"></ul>
-  </section>
+    <!-- Student Management -->
+    <section class="p-6 rounded-2xl bg-white/20 backdrop-blur shadow-xl">
+      <h2 class="text-2xl font-semibold mb-4">👩‍🎓 Manage Students</h2>
+      <input id="studentName" placeholder="Name" class="inputBox">
+      <input id="studentRoll" placeholder="Roll" class="inputBox">
+      <select id="studentBranch" class="inputBox">
+        <option value="CSE">CSE</option>
+        <option value="CSE-AIML">CSE-AIML</option>
+        <option value="AIML">AIML</option>
+      </select>
+      <input id="studentYear" placeholder="Year" class="inputBox">
+      <input id="studentSem" placeholder="Semester" class="inputBox">
+      <input id="studentSGPA" placeholder="SGPA" class="inputBox">
+      <input id="studentCGPA" placeholder="CGPA" class="inputBox">
+      <button onclick="gainXP(20)" class="btnPrimary">Add Student</button>
+    </section>
 
-  <!-- Study Materials -->
-  <section class="admin-panel">
-    <h2>📘 Add Study Material</h2>
-    <input id="materialText" placeholder="Material Title">
-    <input id="materialLink" placeholder="Material Link">
-    <button onclick="addMaterial()">Add Material</button>
+    <!-- Events -->
+    <section class="p-6 rounded-2xl bg-white/20 backdrop-blur shadow-xl">
+      <h2 class="text-2xl font-semibold mb-4">📢 Add Upcoming Event</h2>
+      <input id="eventText" placeholder="Event details" class="inputBox">
+      <button onclick="gainXP(15)" class="btnPrimary">Add Event</button>
+      <ul id="adminEventsList" class="mt-4 space-y-2"></ul>
+    </section>
 
-    <!-- Admin Materials List -->
-    <h3>📘 Manage Study Materials</h3>
-    <ul id="adminMaterialsList"></ul>
-  </section>
+    <!-- Study Materials -->
+    <section class="p-6 rounded-2xl bg-white/20 backdrop-blur shadow-xl">
+      <h2 class="text-2xl font-semibold mb-4">📘 Add Study Material</h2>
+      <input id="materialText" placeholder="Material Title" class="inputBox">
+      <input id="materialLink" placeholder="Material Link" class="inputBox">
+      <button onclick="gainXP(10)" class="btnPrimary">Add Material</button>
+      <ul id="adminMaterialsList" class="mt-4 space-y-2"></ul>
+    </section>
 
-  <!-- Password Change -->
-  <section class="admin-panel">
-    <h2>🔑 Change Password</h2>
-    <input type="password" id="oldPassword" placeholder="Old Password">
-    <input type="password" id="newPassword" placeholder="New Password">
-    <button onclick="changePassword()">Change Password</button>
-    <p id="passwordMessage"></p>
-  </section>
+    <!-- Password -->
+    <section class="p-6 rounded-2xl bg-white/20 backdrop-blur shadow-xl">
+      <h2 class="text-2xl font-semibold mb-4">🔑 Change Password</h2>
+      <input type="password" id="oldPassword" placeholder="Old Password" class="inputBox">
+      <input type="password" id="newPassword" placeholder="New Password" class="inputBox">
+      <button onclick="gainXP(25)" class="btnPrimary">Change Password</button>
+      <p id="passwordMessage"></p>
+    </section>
+  </div>
+
+  <!-- Dark Mode Toggle -->
+  <button id="darkModeBtn" 
+    class="fixed bottom-4 right-4 bg-black/30 p-3 rounded-full hover:bg-black/50 transition">
+    🌙
+  </button>
+
+  <script>
+    // Dark Mode Toggle
+    const btn = document.getElementById("darkModeBtn");
+    btn.addEventListener("click", () => {
+      document.body.classList.toggle("bg-gray-900");
+      document.body.classList.toggle("text-white");
+    });
+  </script>
+
+  <style>
+    .inputBox {
+      @apply w-full mb-3 px-3 py-2 rounded-lg bg-white/30 backdrop-blur border border-white/50 text-black placeholder-gray-700;
+    }
+    .btnPrimary {
+      @apply px-4 py-2 rounded-xl bg-indigo-500 hover:bg-indigo-600 transition font-bold;
+    }
+  </style>
 </body>
 </html>
-
