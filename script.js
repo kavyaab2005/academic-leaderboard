@@ -1,4 +1,4 @@
- "use strict";
+"use strict";
 
 const DEBUG = true;
 function log(...args) { if (DEBUG) console.log("[script.js]", ...args); }
@@ -13,18 +13,19 @@ function escapeHtml(text) {
 }
 
 // ===== Admin Login =====
+const ADMIN_PASSWORD = "password123"; // Change this for your admin password
+
 function isAdmin() {
   return localStorage.getItem("isAdmin") === "1";
 }
 
-function loginAdmin(username, password) {
-  // Hardcoded credentials (replace with secure backend in production)
-  if (username === "admin" && password === "password123") {
+function loginAdmin(password) {
+  if (password === ADMIN_PASSWORD) {
     localStorage.setItem("isAdmin", "1");
     alert("✅ Admin logged in successfully.");
     displayAdminInterface();
   } else {
-    alert("❌ Invalid credentials");
+    alert("❌ Invalid password");
   }
 }
 
@@ -231,9 +232,8 @@ window.addEventListener("DOMContentLoaded", () => {
   const loginBtn = document.querySelector("#loginButton");
   if (loginBtn) {
     loginBtn.addEventListener("click", () => {
-      const username = document.querySelector("#usernameInput").value;
       const password = document.querySelector("#passwordInput").value;
-      loginAdmin(username, password);
+      loginAdmin(password);
     });
   }
 
@@ -257,3 +257,4 @@ function displayPublicInterface() {
   document.querySelector("#adminPanel").style.display = "none";
   document.querySelector("#loginPanel").style.display = "block";
 }
+
