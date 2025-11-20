@@ -1,53 +1,62 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>VVIT Academic Leaderboard</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Academics Leaderboard — Home</title>
   <link rel="stylesheet" href="style.css">
-  <script defer src="script.js"></script>
 </head>
 <body>
-  <!-- Header -->
-  <header class="header">
-    <div class="header-container">
-      <div class="logo-title">
-        <img src="vvit_logo.png" alt="VVIT Logo" class="logo">
-        <h1>Vijaya Vittala Institute of Technology</h1>
-      </div>
-      <nav class="navbar">
-        <a href="index.html">Home</a>
-        <a href="leaderboard.html">Leaderboard</a>
-        <a href="admin-login.html">Admin</a>
-      </nav>
-    </div>
+  <header class="site-header">
+    <a class="brand" href="index.html">LeaderBoard</a>
+    <nav>
+      <a href="leaderboard.html">Leaderboard</a>
+      <a href="study.html">Study Materials</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="admin-login.html">Admin</a>
+    </nav>
   </header>
 
-  <!-- Floating Events Line -->
-  <div class="events-ticker">
-    <marquee id="eventsMarquee">📢 Upcoming events will appear here...</marquee>
-  </div>
+  <main class="container">
+    <section class="hero">
+      <h1>Welcome to the Academic Leaderboard</h1>
+      <p>Track top students, share study resources and inspire growth.</p>
+      <div class="quick-links">
+        <a class="btn" href="leaderboard.html">See Leaderboard</a>
+        <a class="btn ghost" href="admin-login.html">Admin Dashboard</a>
+      </div>
+    </section>
 
-  <!-- Hero -->
-  <section class="hero">
-    <h2>📊 VVIT Academic Leaderboard</h2>
-    <p>Transparent • Fair • Motivating</p>
-    <a href="leaderboard.html" class="btn-primary">View Leaderboard</a>
-  </section>
+    <section id="highlights" class="cards">
+      <article class="card">
+        <h3>Top Ranks</h3>
+        <p id="topCount">Loading...</p>
+      </article>
+      <article class="card">
+        <h3>Materials</h3>
+        <p id="matCount">Loading...</p>
+      </article>
+      <article class="card">
+        <h3>Gallery</h3>
+        <p id="galCount">Loading...</p>
+      </article>
+    </section>
 
-  <!-- Study Materials -->
-  <section class="study-materials">
-    <h2>📘 Study Materials</h2>
-    <ul id="materialsList">
-      <li>No materials uploaded yet.</li>
-    </ul>
-  </section>
+    <section class="features">
+      <h2>Why this leaderboard?</h2>
+      <ul>
+        <li>Shows performance and helps recognition</li>
+        <li>Upload study materials — PDFs, videos</li>
+        <li>Track analytics and trends in the dashboard</li>
+      </ul>
+    </section>
+  </main>
 
-  <!-- Footer -->
-  <footer>
-    <p>© 2025 VVIT | Made by Gulla 😊</p>
+  <footer class="site-footer">
+    <small>© <span id="year"></span> Academic Leaderboard</small>
   </footer>
+
+  <script src="script.js"></script>
 </body>
 </html>
-
-
 
