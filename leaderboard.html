@@ -1,38 +1,27 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Leaderboard | VVIT</title>
+  <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Leaderboard</title>
   <link rel="stylesheet" href="style.css">
-  <script defer src="script.js"></script>
 </head>
 <body>
-  <header class="header">
-    <div class="header-container">
-      <div class="logo-title">
-        <img src="vvit_logo.png" class="logo">
-        <h1>VVIT Leaderboard</h1>
-      </div>
-      <nav class="navbar">
-        <a href="index.html">Home</a>
-        <a href="leaderboard.html">Leaderboard</a>
-        <a href="admin-login.html">Admin</a>
-      </nav>
-    </div>
+  <header class="site-header">
+    <a class="brand" href="index.html">LeaderBoard</a>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="study.html">Study Materials</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="admin-login.html">Admin</a>
+    </nav>
   </header>
 
-  <section class="leaderboard">
-    <h2>🏆 Student Rankings</h2>
-    <table id="leaderboardTable">
-      <thead>
-        <tr>
-          <th>Rank</th><th>Name</th><th>Roll</th>
-          <th>Branch</th><th>Year</th><th>Semester</th>
-          <th>SGPA</th><th>CGPA</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </section>
+  <main class="container">
+    <h1>Leaderboard</h1>
+    <div id="leaderboard" class="leaderboard"></div>
+  </main>
+
+  <script src="script.js"></script>
 </body>
 </html>
+
