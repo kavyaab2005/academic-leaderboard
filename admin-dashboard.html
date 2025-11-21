@@ -1,48 +1,266 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-<head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin Dashboard</title>
-  <link rel="stylesheet" href="style.css">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Poppins", sans-serif;
+    }
+
+    body {
+      display: flex;
+      background: #f1f4f9;
+      overflow-x: hidden;
+    }
+
+    /* ---------------- Sidebar ---------------- */
+    .sidebar {
+      position: fixed;
+      width: 260px;
+      height: 100vh;
+      background: #1a237e;
+      padding: 25px 20px;
+      color: #fff;
+    }
+
+    .sidebar h2 {
+      font-size: 28px;
+      margin-bottom: 40px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .sidebar a {
+      display: block;
+      padding: 12px 18px;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 8px;
+      margin: 10px 0;
+      transition: 0.3s;
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    .sidebar a:hover {
+      background: #303f9f;
+    }
+
+    /* ---------------- Main Section ---------------- */
+    .main {
+      margin-left: 260px;
+      padding: 30px;
+      width: calc(100% - 260px);
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .top-bar h1 {
+      font-size: 32px;
+      font-weight: 600;
+    }
+
+    .top-bar button {
+      padding: 10px 20px;
+      background: #3949ab;
+      border: none;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 500;
+      transition: 0.3s;
+    }
+
+    .top-bar button:hover {
+      background: #1a237e;
+    }
+
+    /* ---------------- Cards ---------------- */
+    .cards {
+      margin-top: 40px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 25px;
+    }
+
+    .card {
+      background: white;
+      padding: 22px;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      transition: 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    .card h3 {
+      font-size: 22px;
+      margin-bottom: 10px;
+    }
+
+    .card p {
+      font-size: 32px;
+      font-weight: bold;
+      color: #3949ab;
+    }
+
+    /* ---------------- Table ---------------- */
+    .table-section {
+      margin-top: 50px;
+      background: white;
+      padding: 25px;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th, td {
+      padding: 14px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+      font-size: 16px;
+    }
+
+    th {
+      background: #3949ab;
+      color: white;
+    }
+
+    tr:hover {
+      background: #f5f5f5;
+    }
+
+    /* ---------------- Responsive ---------------- */
+    @media (max-width: 900px) {
+      .sidebar {
+        width: 200px;
+      }
+      .main {
+        margin-left: 200px;
+        width: calc(100% - 200px);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .sidebar {
+        display: none;
+      }
+      .main {
+        margin: 0;
+        width: 100%;
+      }
+    }
+  </style>
 </head>
+
 <body>
-  <header class="site-header"><a class="brand" href="index.html">LeaderBoard</a>
-    <nav><a href="index.html">Home</a> <button id="logoutBtn" class="btn ghost">Logout</button></nav>
-  </header>
 
-  <main class="container admin">
-    <h1>Admin Dashboard</h1>
-    <section class="admin-grid">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h2>Admin Panel</h2>
+    <a href="#">Dashboard</a>
+    <a href="add-student.html">Add Student</a>
+    <a href="add-material.html">Add Study Materials</a>
+    <a href="leaderboard.html">View Leaderboard</a>
+    <a href="gallery.html">Manage Gallery</a>
+    <a href="index.html">Logout</a>
+  </div>
+
+  <!-- Main Section -->
+  <div class="main">
+
+    <div class="top-bar">
+      <h1>Dashboard</h1>
+      <button onclick="alert('Logged Out')">Logout</button>
+    </div>
+
+    <!-- Cards -->
+    <div class="cards">
       <div class="card">
-        <h3>Students</h3>
-        <button id="addStudentBtn" class="btn">Add Student</button>
-        <div id="studentsList"></div>
+        <h3>Total Students</h3>
+        <p>120</p>
       </div>
 
       <div class="card">
-        <h3>Leaderboard</h3>
-        <button id="addEntryBtn" class="btn">Add Entry</button>
-        <div id="leaderboardAdmin"></div>
+        <h3>Materials Uploaded</h3>
+        <p>45</p>
       </div>
 
       <div class="card">
-        <h3>Study Materials</h3>
-        <button id="uploadMatBtn" class="btn">Upload</button>
-        <div id="materialsAdmin"></div>
+        <h3>Leaderboard Entries</h3>
+        <p>350</p>
       </div>
 
       <div class="card">
-        <h3>Gallery</h3>
-        <button id="uploadImgBtn" class="btn">Upload Image</button>
-        <div id="galleryAdmin"></div>
+        <h3>Gallery Photos</h3>
+        <p>80</p>
       </div>
+    </div>
 
-      <div class="card">
-        <h3>Account</h3>
-        <button id="changePassBtn" class="btn">Change Password</button>
-      </div>
-    </section>
-  </main>
+    <!-- Table -->
+    <div class="table-section">
+      <h2>Recent Student Registrations</h2>
 
-  <script src="script.js"></script>
+      <table>
+        <tr>
+          <th>Name</th>
+          <th>Roll Number</th>
+          <th>Department</th>
+          <th>Year</th>
+        </tr>
+
+        <tr>
+          <td>Ravi Kumar</td>
+          <td>22CS101</td>
+          <td>CSE</td>
+          <td>2nd</td>
+        </tr>
+
+        <tr>
+          <td>Ananya</td>
+          <td>22EC077</td>
+          <td>ECE</td>
+          <td>2nd</td>
+        </tr>
+
+        <tr>
+          <td>Manoj</td>
+          <td>21ME032</td>
+          <td>ME</td>
+          <td>3rd</td>
+        </tr>
+
+        <tr>
+          <td>Sneha</td>
+          <td>23AI009</td>
+          <td>AIML</td>
+          <td>1st</td>
+        </tr>
+
+      </table>
+    </div>
+
+  </div>
 </body>
 </html>
