@@ -1,70 +1,138 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
+/* ----------------------------------------------------
+   Academic Leaderboard - Backend (server.js)
+---------------------------------------------------- */
+
+const express = require("express");
+const cors = require("cors");
+const fs = require("fs");
+const multer = require("multer");
+const path = require("path");
+
 const app = express();
-app.use(cors()); app.use(express.json());
+app.use(cors());
+app.use(express.json());
+app.use(express.static("uploads"));
 
-const JWT_SECRET = 'devsecret';
+/* ----------------------------------------------------
+   FILE UPLOAD CONFIG (multer)
+---------------------------------------------------- */
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/");
+  },
+  filename: (req, file, cb) => {
+    cb(
+      null,
+      Date.now() + "-" + Math.round(Math.random() * 10000) + path.extname(file.originalname)
+    );
+  }
+});
 
-// Connect MongoDB
-mongoose.connect('mongodb://localhost/leaderboard', {useNewUrlParser:true, useUnifiedTopology:true});
+const upload = multer({ storage });
 
-// Schemas
-const Admin = mongoose.model('Admin', new mongoose.Schema({email:{type:String,unique:true}, password:String}));
-const Student = mongoose.model('Student', new mongoose.Schema({name:String, class:String}));
-const Leaderboard = mongoose.model('Leaderboard', new mongoose.Schema({name:String, score:Number}));
-const Material = mongoose.model('Material', new mongoose.Schema({title:String, url:String, description:String}));
-const Gallery = mongoose.model('Gallery', new mongoose.Schema({url:String, caption:String}));
+/* ----------------------------------------------------
+   DATABASE FILES (JSON local DB)
+---------------------------------------------------- */
+const db = {
+  students: "db/students.json",
+  materials: "db/materials.json",
+  gallery: "db/gallery.json",
+  events: "db/events.json",
+};
 
-// seed admin if not exists
-(async ()=>{
-  const a = await Admin.findOne({email:'admin@example.com'});
-  if(!a){ const hash = await bcrypt.hash('password123',10); await Admin.create({email:'admin@example.com', password:hash}); console.log('Admin seeded'); }
-})();
-
-function auth(req,res,next){
-  const token = req.headers.authorization?.split(' ')[1];
-  if(!token) return res.status(401).json({message:'unauthorized'});
-  try{ const data = jwt.verify(token,JWT_SECRET); req.admin = data; next(); }catch(e){ res.status(401).json({message:'unauthorized'}); }
+// Read DB helper
+function readDB(file) {
+  if (!fs.existsSync(file)) return [];
+  let data = fs.readFileSync(file);
+  return JSON.parse(data || "[]");
 }
 
-app.post('/api/admin/login', async (req,res)=>{
-  const {email,password} = req.body;
-  const a = await Admin.findOne({email});
-  if(!a) return res.status(401).json({message:'Invalid'});
-  const ok = await bcrypt.compare(password, a.password);
-  if(!ok) return res.status(401).json({message:'Invalid'});
-  const token = jwt.sign({id:a._id,email:a.email}, JWT_SECRET, {expiresIn:'8h'});
-  res.json({token});
+// Write DB helper
+function writeDB(file, data) {
+  fs.writeFileSync(file, JSON.stringify(data, null, 2));
+}
+
+/* ----------------------------------------------------
+   ROUTES
+---------------------------------------------------- */
+
+/* ------------------ Students ------------------ */
+app.get("/students", (req, res) => {
+  res.json(readDB(db.students));
 });
 
-// Students
-app.get('/api/students', async (req,res)=> res.json(await Student.find()));
-app.post('/api/students', auth, async (req,res)=> { await Student.create(req.body); res.json({ok:true}); });
-app.delete('/api/students/:id', auth, async (req,res)=> { await Student.findByIdAndDelete(req.params.id); res.json({ok:true}); });
-
-// Leaderboard
-app.get('/api/leaderboard', async (req,res)=> res.json(await Leaderboard.find().sort({score:-1})));
-app.post('/api/leaderboard', auth, async (req,res)=> { await Leaderboard.create(req.body); res.json({ok:true}); });
-app.delete('/api/leaderboard/:id', auth, async (req,res)=> { await Leaderboard.findByIdAndDelete(req.params.id); res.json({ok:true}); });
-
-// Materials & Gallery
-app.get('/api/studymaterials', async (req,res)=> res.json(await Material.find().sort({createdAt:-1})));
-app.post('/api/studymaterials', auth, async (req,res)=> { await Material.create(req.body); res.json({ok:true}); });
-app.delete('/api/studymaterials/:id', auth, async (req,res)=> { await Material.findByIdAndDelete(req.params.id); res.json({ok:true}); });
-
-app.get('/api/gallery', async (req,res)=> res.json(await Gallery.find().sort({createdAt:-1})));
-app.post('/api/gallery', auth, async (req,res)=> { await Gallery.create(req.body); res.json({ok:true}); });
-app.delete('/api/gallery/:id', auth, async (req,res)=> { await Gallery.findByIdAndDelete(req.params.id); res.json({ok:true}); });
-
-// Dashboard stats
-app.get('/api/dashboard/stats', async (req,res)=>{
-  const top = await Leaderboard.countDocuments();
-  const materials = await Material.countDocuments();
-  const gallery = await Gallery.countDocuments();
-  res.json({top,materials,gallery});
+app.post("/students", (req, res) => {
+  let students = readDB(db.students);
+  const newStudent = {
+    id: Date.now(),
+    name: req.body.name,
+    marks: req.body.marks,
+    dept: req.body.dept,
+    rank: req.body.rank,
+  };
+  students.push(newStudent);
+  writeDB(db.students, students);
+  res.json({ message: "Student added", student: newStudent });
 });
 
-app.listen(4000, ()=>console.log('node api on 4000'));
+/* ------------------ Study Materials ------------------ */
+app.get("/materials", (req, res) => {
+  res.json(readDB(db.materials));
+});
+
+app.post("/materials", (req, res) => {
+  let materials = readDB(db.materials);
+  const newMaterial = {
+    id: Date.now(),
+    title: req.body.title,
+    url: req.body.url,
+    subject: req.body.subject,
+  };
+  materials.push(newMaterial);
+  writeDB(db.materials, materials);
+  res.json({ message: "Material added", material: newMaterial });
+});
+
+/* ------------------ Gallery Photos ------------------ */
+app.get("/gallery", (req, res) => {
+  res.json(readDB(db.gallery));
+});
+
+app.post("/gallery", upload.single("photo"), (req, res) => {
+  let gallery = readDB(db.gallery);
+  const newPhoto = {
+    id: Date.now(),
+    image: req.file.filename,
+  };
+  gallery.push(newPhoto);
+  writeDB(db.gallery, gallery);
+  res.json({ message: "Photo uploaded", photo: newPhoto });
+});
+
+/* ------------------ Events ------------------ */
+app.get("/events", (req, res) => {
+  res.json(readDB(db.events));
+});
+
+app.post("/events", upload.single("eventImage"), (req, res) => {
+  let events = readDB(db.events);
+  const newEvent = {
+    id: Date.now(),
+    title: req.body.title,
+    date: req.body.date,
+    location: req.body.location,
+    description: req.body.description,
+    image: req.file ? req.file.filename : null,
+  };
+
+  events.push(newEvent);
+  writeDB(db.events, events);
+  res.json({ message: "Event added", event: newEvent });
+});
+
+/* ----------------------------------------------------
+   START SERVER
+---------------------------------------------------- */
+app.listen(5000, () => {
+  console.log("🔥 Server running on http://localhost:5000");
+});
