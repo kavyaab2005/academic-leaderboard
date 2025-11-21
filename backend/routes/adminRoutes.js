@@ -7,8 +7,10 @@ const adminController = require('../controllers/adminController');
 const auth = require('../middlewares/auth');
 
 
-router.post('/login', adminController.login);
-router.get('/stats', auth, adminController.getStats);
+
+router.post("/register", adminController.register);
+router.post("/login", adminController.login);
+
 
 
 module.exports = router;
