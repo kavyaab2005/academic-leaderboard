@@ -1,62 +1,178 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Academics Leaderboard — Home</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Academic Leaderboard</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
+
+        body {
+            background: #f5f7fa;
+            color: #333;
+        }
+
+        /* Navbar */
+        nav {
+            background: #ffffff;
+            padding: 15px 35px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav .logo {
+            font-size: 24px;
+            font-weight: 600;
+            color: #4b6fff;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 25px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+        }
+
+        nav ul li a:hover {
+            color: #4b6fff;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 75vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            background: linear-gradient(135deg, #4b6fff, #6ea8fe);
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            font-size: 20px;
+            max-width: 650px;
+            opacity: 0.9;
+        }
+
+        .btn {
+            margin-top: 25px;
+            padding: 12px 25px;
+            background: white;
+            color: #4b6fff;
+            font-weight: 600;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            background: #dfe6ff;
+        }
+
+        /* Features */
+        .features {
+            padding: 60px 40px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+        }
+
+        .feature-box {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .feature-box h3 {
+            margin-bottom: 15px;
+            color: #4b6fff;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            background: #4b6fff;
+            color: white;
+            padding: 15px;
+            margin-top: 40px;
+        }
+    </style>
 </head>
+
 <body>
-  <header class="site-header">
-    <a class="brand" href="index.html">LeaderBoard</a>
+
+    <!-- Navbar -->
     <nav>
-      <a href="leaderboard.html">Leaderboard</a>
-      <a href="study.html">Study Materials</a>
-      <a href="gallery.html">Gallery</a>
-      <a href="admin-login.html">Admin</a>
+        <div class="logo">Academic Leaderboard</div>
+        <ul>
+            <li><a href="leaderboard.html">Leaderboard</a></li>
+            <li><a href="study-materials.html">Study Materials</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
+            <li><a href="admin-login.html">Admin</a></li>
+        </ul>
     </nav>
-  </header>
 
-  <main class="container">
+    <!-- Hero -->
     <section class="hero">
-      <h1>Welcome to the Academic Leaderboard</h1>
-      <p>Track top students, share study resources and inspire growth.</p>
-      <div class="quick-links">
-        <a class="btn" href="leaderboard.html">See Leaderboard</a>
-        <a class="btn ghost" href="admin-login.html">Admin Dashboard</a>
-      </div>
+        <h1>Welcome to Academic Leaderboard</h1>
+        <p>Your smart platform to track academic performance, access study materials, 
+        and stay updated with student achievements.</p>
+        <a class="btn" href="leaderboard.html">View Leaderboard</a>
     </section>
 
-    <section id="highlights" class="cards">
-      <article class="card">
-        <h3>Top Ranks</h3>
-        <p id="topCount">Loading...</p>
-      </article>
-      <article class="card">
-        <h3>Materials</h3>
-        <p id="matCount">Loading...</p>
-      </article>
-      <article class="card">
-        <h3>Gallery</h3>
-        <p id="galCount">Loading...</p>
-      </article>
-    </section>
-
+    <!-- Features -->
     <section class="features">
-      <h2>Why this leaderboard?</h2>
-      <ul>
-        <li>Shows performance and helps recognition</li>
-        <li>Upload study materials — PDFs, videos</li>
-        <li>Track analytics and trends in the dashboard</li>
-      </ul>
+        <div class="feature-box">
+            <h3>🏆 Leaderboard</h3>
+            <p>Track top-performing students across subjects and semesters.</p>
+        </div>
+
+        <div class="feature-box">
+            <h3>📘 Study Materials</h3>
+            <p>Access curated notes, PDFs, and important resources.</p>
+        </div>
+
+        <div class="feature-box">
+            <h3>📸 Gallery</h3>
+            <p>Explore photos of events, winners, and achievements.</p>
+        </div>
+
+        <div class="feature-box">
+            <h3>🔐 Admin Panel</h3>
+            <p>Admins can add students, update records, and manage materials.</p>
+        </div>
     </section>
-  </main>
 
-  <footer class="site-footer">
-    <small>© <span id="year"></span> Academic Leaderboard</small>
-  </footer>
+    <!-- Footer -->
+    <footer>
+        © 2025 Academic Leaderboard | Developed with by ❤️ 
+    </footer>
 
-  <script src="script.js"></script>
 </body>
 </html>
-
