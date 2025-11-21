@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Add Events - Admin Dashboard</title>
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    body {
+      margin: 0;
+      font-family: "Poppins", sans-serif;
+      background: #f3f5ff;
+      display: flex;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 260px;
+      background: #121629;
+      height: 100vh;
+      position: fixed;
+      color: #fff;
+      padding: 20px 0;
+    }
+
+    .sidebar h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 22px;
+      letter-spacing: 1px;
+      font-weight: 700;
+    }
+
+    .sidebar a {
+      display: block;
+      padding: 14px 25px;
+      color: #b8b8d1;
+      font-size: 16px;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+
+    .sidebar a:hover,
+    .sidebar a.active {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+
+    /* Main Dashboard */
+    .main {
+      margin-left: 260px;
+      padding: 30px;
+      width: 100%;
+    }
+
+    .topbar {
+      background: #fff;
+      padding: 18px 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    .topbar h1 {
+      font-size: 24px;
+      font-weight: 700;
+      color: #333;
+    }
+
+    /* Add Event Container */
+    .form-container {
+      background: #fff;
+      padding: 40px;
+      border-radius: 14px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+      max-width: 900px;
+    }
+
+    .form-container h2 {
+      margin-bottom: 20px;
+      font-size: 26px;
+      font-weight: 700;
+    }
+
+    label {
+      font-weight: 600;
+      color: #333;
+      display: block;
+      margin: 15px 0 6px;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 14px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 15px;
+      outline: none;
+      transition: 0.3s;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      border-color: #4f46e5;
+      box-shadow: 0 0 6px rgba(79, 70, 229, 0.3);
+    }
+
+    textarea {
+      height: 130px;
+      resize: vertical;
+    }
+
+    /* Upload Box */
+    .upload-box {
+      border: 2px dashed #4f46e5;
+      padding: 30px;
+      border-radius: 10px;
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    .upload-box input {
+      border: none;
+    }
+
+    #previewImg {
+      width: 200px;
+      margin-top: 15px;
+      display: none;
+      border-radius: 10px;
+    }
+
+    /* Button */
+    button {
+      margin-top: 20px;
+      padding: 14px 25px;
+      background: #4f46e5;
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #3730a3;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 200px;
+      }
+      .main {
+        margin-left: 200px;
+      }
+      .form-container {
+        padding: 25px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .sidebar {
+        display: none;
+      }
+      .main {
+        margin-left: 0;
+      }
+    }
+  </style>
+
+  <script>
+    function previewFile() {
+      const preview = document.getElementById("previewImg");
+      const file = document.getElementById("eventImage").files[0];
+      const reader = new FileReader();
+
+      reader.onloadend = function () {
+        preview.src = reader.result;
+        preview.style.display = "block";
+      };
+
+      if (file) reader.readAsDataURL(file);
+    }
+  </script>
+</head>
+
+<body>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h2>Admin Dashboard</h2>
+    <a href="admin-dashboard.html">Home</a>
+    <a href="add-student.html">Add Student</a>
+    <a href="add-material.html">Add Study Material</a>
+    <a href="add-photo.html">Add Gallery Photo</a>
+    <a class="active" href="add-events.html">Add Events</a>
+    <a href="index.html">Logout</a>
+  </div>
+
+  <!-- Main -->
+  <div class="main">
+    <div class="topbar">
+      <h1>Add New Event</h1>
+    </div>
+
+    <div class="form-container">
+      <h2>Event Details</h2>
+      <form>
+
+        <label>Event Title</label>
+        <input type="text" placeholder="Enter event title" required>
+
+        <label>Date</label>
+        <input type="date" required>
+
+        <label>Location</label>
+        <input type="text" placeholder="Enter event location" required>
+
+        <label>Description</label>
+        <textarea placeholder="Enter full event description..." required></textarea>
+
+        <label>Upload Event Image</label>
+        <div class="upload-box">
+          <input type="file" id="eventImage" accept="image/*" onchange="previewFile()">
+          <img id="previewImg">
+        </div>
+
+        <button type="submit">Add Event</button>
+      </form>
+    </div>
+  </div>
+
+</body>
+</html>
+add
