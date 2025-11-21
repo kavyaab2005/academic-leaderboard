@@ -1,27 +1,288 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Leaderboard</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboard | Academic Leaderboard</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
+
+        body {
+            background: #eef2f7;
+            color: #333;
+        }
+
+        /* Navbar */
+        nav {
+            background: #ffffff;
+            padding: 15px 35px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav .logo {
+            font-size: 22px;
+            font-weight: 600;
+            color: #4b6fff;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 25px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+        }
+
+        nav ul li a:hover {
+            color: #4b6fff;
+        }
+
+        /* Page Title */
+        .heading {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 36px;
+            font-weight: 700;
+            color: #4b6fff;
+        }
+
+        /* Search */
+        .search-box {
+            display: flex;
+            justify-content: center;
+            margin: 25px 0;
+        }
+
+        .search-box input {
+            width: 300px;
+            padding: 12px 18px;
+            border-radius: 8px;
+            border: 1px solid #bbb;
+            outline: none;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+
+        .search-box input:focus {
+            border-color: #4b6fff;
+        }
+
+        /* Table Container */
+        .table-container {
+            width: 90%;
+            margin: 30px auto;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        thead {
+            background: #4b6fff;
+            color: white;
+        }
+
+        th, td {
+            padding: 15px 12px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        tr:nth-child(even) {
+            background: #f5f7fc;
+        }
+
+        tr:hover {
+            background: #eaf0ff;
+            transition: 0.2s;
+        }
+
+        th {
+            cursor: pointer;
+        }
+
+        /* Rank badges */
+        .gold {
+            color: #d4af37;
+            font-weight: bold;
+        }
+
+        .silver {
+            color: #b8bcc0;
+            font-weight: bold;
+        }
+
+        .bronze {
+            color: #cd7f32;
+            font-weight: bold;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            background: #4b6fff;
+            color: white;
+            padding: 15px;
+            margin-top: 40px;
+        }
+    </style>
 </head>
+
 <body>
-  <header class="site-header">
-    <a class="brand" href="index.html">LeaderBoard</a>
+
+    <!-- Navbar -->
     <nav>
-      <a href="index.html">Home</a>
-      <a href="study.html">Study Materials</a>
-      <a href="gallery.html">Gallery</a>
-      <a href="admin-login.html">Admin</a>
+        <div class="logo">Academic Leaderboard</div>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="#">Leaderboard</a></li>
+            <li><a href="study-materials.html">Study Materials</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
+        </ul>
     </nav>
-  </header>
 
-  <main class="container">
-    <h1>Leaderboard</h1>
-    <div id="leaderboard" class="leaderboard"></div>
-  </main>
+    <h1 class="heading">Student Leaderboard</h1>
 
-  <script src="script.js"></script>
+    <!-- Search -->
+    <div class="search-box">
+        <input type="text" id="search" placeholder="Search student name..." onkeyup="searchStudent()">
+    </div>
+
+    <!-- Table -->
+    <div class="table-container">
+        <table id="leaderboardTable">
+            <thead>
+                <tr>
+                    <th onclick="sortTable(0)">Rank ⬍</th>
+                    <th onclick="sortTable(1)">Name ⬍</th>
+                    <th>USN</th>
+                    <th onclick="sortTable(3)">Department ⬍</th>
+                    <th onclick="sortTable(4)">Score ⬍</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr>
+                    <td class="gold">1</td>
+                    <td>Aryan Sharma</td>
+                    <td>CS001</td>
+                    <td>CSE</td>
+                    <td>98</td>
+                </tr>
+                <tr>
+                    <td class="silver">2</td>
+                    <td>Kavya B</td>
+                    <td>CS002</td>
+                    <td>CSE</td>
+                    <td>94</td>
+                </tr>
+                <tr>
+                    <td class="bronze">3</td>
+                    <td>Rahul S</td>
+                    <td>CS003</td>
+                    <td>ECE</td>
+                    <td>92</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>Sneha R</td>
+                    <td>CS004</td>
+                    <td>ISE</td>
+                    <td>89</td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>Mohit Kumar</td>
+                    <td>CS005</td>
+                    <td>ME</td>
+                    <td>85</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        © 2025 Academic Leaderboard | Developed with ❤️ by Gulla
+    </footer>
+
+
+    <!-- JS for Sorting + Search -->
+    <script>
+        function sortTable(columnIndex) {
+            let table = document.getElementById("leaderboardTable");
+            let switching = true;
+            let direction = "asc";
+            let switchCount = 0;
+
+            while (switching) {
+                switching = false;
+                let rows = table.rows;
+
+                for (let i = 1; i < rows.length - 1; i++) {
+                    let shouldSwitch = false;
+                    let x = rows[i].getElementsByTagName("td")[columnIndex];
+                    let y = rows[i + 1].getElementsByTagName("td")[columnIndex];
+
+                    if (direction === "asc") {
+                        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                            shouldSwitch = true;
+                            break;
+                        }
+                    } else {
+                        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                            shouldSwitch = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (shouldSwitch) {
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                    switching = true;
+                    switchCount++;
+                } else {
+                    if (switchCount === 0 && direction === "asc") {
+                        direction = "desc";
+                        switching = true;
+                    }
+                }
+            }
+        }
+
+        function searchStudent() {
+            let input = document.getElementById("search").value.toLowerCase();
+            let rows = document.querySelectorAll("#leaderboardTable tbody tr");
+
+            rows.forEach(row => {
+                let name = row.children[1].textContent.toLowerCase();
+                row.style.display = name.includes(input) ? "" : "none";
+            });
+        }
+    </script>
+
 </body>
 </html>
-
