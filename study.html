@@ -1,26 +1,286 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Leaderboard</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Materials | Academic Leaderboard</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
+
+        body {
+            background: #eef2f7;
+            color: #333;
+        }
+
+        /* Navbar */
+        nav {
+            background: #ffffff;
+            padding: 15px 35px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav .logo {
+            font-size: 22px;
+            font-weight: 600;
+            color: #4b6fff;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 25px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+        }
+
+        nav ul li a:hover {
+            color: #4b6fff;
+        }
+
+        /* Page Title */
+        .heading {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 36px;
+            font-weight: 700;
+            color: #4b6fff;
+        }
+
+        /* Search */
+        .search-box {
+            display: flex;
+            justify-content: center;
+            margin: 25px 0;
+        }
+
+        .search-box input {
+            width: 340px;
+            padding: 12px 18px;
+            border-radius: 8px;
+            border: 1px solid #bbb;
+            outline: none;
+            font-size: 16px;
+        }
+
+        .search-box input:focus {
+            border-color: #4b6fff;
+        }
+
+        /* Filters */
+        .filters {
+            width: 90%;
+            margin: auto;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            background: #fff;
+            border: 1px solid #4b6fff;
+            color: #4b6fff;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: #4b6fff;
+            color: white;
+        }
+
+        /* Cards Container */
+        .materials-container {
+            width: 90%;
+            margin: 40px auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 25px;
+        }
+
+        /* Card */
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+            transition: 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+        }
+
+        .card h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: #4b6fff;
+        }
+
+        .card p {
+            font-size: 15px;
+            margin-bottom: 15px;
+            opacity: 0.8;
+        }
+
+        .download-btn {
+            text-decoration: none;
+            padding: 10px 20px;
+            background: #4b6fff;
+            color: white;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 500;
+            display: inline-block;
+        }
+
+        .download-btn:hover {
+            background: #3d5ee3;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            background: #4b6fff;
+            color: white;
+            padding: 15px;
+            margin-top: 40px;
+        }
+    </style>
 </head>
+
 <body>
-  <header class="site-header">
-    <a class="brand" href="index.html">LeaderBoard</a>
+
+    <!-- Navbar -->
     <nav>
-      <a href="index.html">Home</a>
-      <a href="study.html">Study Materials</a>
-      <a href="gallery.html">Gallery</a>
-      <a href="admin-login.html">Admin</a>
+        <div class="logo">Academic Leaderboard</div>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="leaderboard.html">Leaderboard</a></li>
+            <li><a href="#">Study Materials</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
+        </ul>
     </nav>
-  </header>
 
-  <main class="container">
-    <h1>Leaderboard</h1>
-    <div id="leaderboard" class="leaderboard"></div>
-  </main>
+    <!-- Heading -->
+    <h1 class="heading">Study Materials</h1>
 
-  <script src="script.js"></script>
+    <!-- Search -->
+    <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Search materials..." onkeyup="searchMaterials()">
+    </div>
+
+    <!-- Filters -->
+    <div class="filters">
+        <button class="filter-btn active" onclick="filterMaterials('all')">All</button>
+        <button class="filter-btn" onclick="filterMaterials('cse')">CSE</button>
+        <button class="filter-btn" onclick="filterMaterials('ece')">ECE</button>
+        <button class="filter-btn" onclick="filterMaterials('ise')">ISE</button>
+        <button class="filter-btn" onclick="filterMaterials('me')">ME</button>
+    </div>
+
+    <!-- Materials Grid -->
+    <div class="materials-container" id="materialsContainer">
+        
+        <!-- CSE Materials -->
+        <div class="card cse">
+            <h3>Data Structures Notes</h3>
+            <p>Complete PDF with diagrams and examples.</p>
+            <a href="#" class="download-btn">Download</a>
+        </div>
+
+        <div class="card cse">
+            <h3>Python Programming</h3>
+            <p>Beginner to advanced concepts.</p>
+            <a href="#" class="download-btn">Download</a>
+        </div>
+
+        <!-- ECE Materials -->
+        <div class="card ece">
+            <h3>Digital Electronics</h3>
+            <p>Module-wise complete notes.</p>
+            <a href="#" class="download-btn">Download</a>
+        </div>
+
+        <div class="card ece">
+            <h3>Signals & Systems</h3>
+            <p>Important formulas and solved numericals.</p>
+            <a href="#" class="download-btn">Download</a>
+        </div>
+
+        <!-- ISE Materials -->
+        <div class="card ise">
+            <h3>Database Management</h3>
+            <p>Includes ER diagrams and SQL queries.</p>
+            <a href="#" class="download-btn">Download</a>
+        </div>
+
+        <!-- ME Materials -->
+        <div class="card me">
+            <h3>Thermodynamics</h3>
+            <p>Short notes + important problems.</p>
+            <a href="#" class="download-btn">Download</a>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        © 2025 Academic Leaderboard | Developed with ❤️ by Gulla
+    </footer>
+
+
+    <!-- JavaScript -->
+    <script>
+        function filterMaterials(branch) {
+            let cards = document.querySelectorAll(".card");
+            let btns = document.querySelectorAll(".filter-btn");
+
+            // Active button highlighting
+            btns.forEach(btn => btn.classList.remove("active"));
+            event.target.classList.add("active");
+
+            // Filtering logic
+            cards.forEach(card => {
+                if (branch === "all") {
+                    card.style.display = "block";
+                } else {
+                    card.style.display = card.classList.contains(branch) ? "block" : "none";
+                }
+            });
+        }
+
+        function searchMaterials() {
+            let input = document.getElementById("searchInput").value.toLowerCase();
+            let cards = document.querySelectorAll(".card");
+
+            cards.forEach(card => {
+                let title = card.querySelector("h3").textContent.toLowerCase();
+                card.style.display = title.includes(input) ? "block" : "none";
+            });
+        }
+    </script>
+
 </body>
 </html>
