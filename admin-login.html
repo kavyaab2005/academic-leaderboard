@@ -1,26 +1,112 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Admin Login</title>
-    <link rel="stylesheet" href="assets/css/auth.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login | Academic Leaderboard</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #4b6fff, #6ea8fe);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Glass Card */
+        .login-card {
+            width: 350px;
+            padding: 35px 30px;
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            border-radius: 16px;
+            backdrop-filter: blur(12px);
+            animation: slideDown 0.8s ease;
+            text-align: center;
+            color: white;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-40px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .login-card h2 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 25px;
+        }
+
+        .login-card input {
+            width: 100%;
+            padding: 12px 15px;
+            margin: 12px 0;
+            border: none;
+            border-radius: 10px;
+            outline: none;
+            font-size: 15px;
+        }
+
+        .login-card input:focus {
+            box-shadow: 0 0 8px rgba(255,255,255,0.5);
+        }
+
+        .btn {
+            width: 100%;
+            margin-top: 18px;
+            padding: 12px 15px;
+            background: white;
+            color: #4b6fff;
+            font-weight: 600;
+            font-size: 16px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            background: #dfe6ff;
+        }
+
+        .back-home {
+            display: block;
+            margin-top: 20px;
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .back-home:hover {
+            opacity: 1;
+        }
+    </style>
 </head>
+
 <body>
 
-<div class="auth-container">
-    <h2>Admin Login</h2>
+    <div class="login-card">
+        <h2>Admin Login</h2>
 
-    <input type="email" id="email" placeholder="Email">
-    <input type="password" id="password" placeholder="Password">
+        <form action="admin-dashboard.html" method="POST">
+            <input type="text" name="username" placeholder="Enter Admin Username" required>
+            <input type="password" name="password" placeholder="Enter Password" required>
 
-    <button onclick="login()">Login</button>
+            <button type="submit" class="btn">Login</button>
+        </form>
 
-    <p>Don't have an account? 
-       <a href="admin-register.html">Register</a>
-    </p>
+        <a href="index.html" class="back-home">← Back to Home</a>
+    </div>
 
-    <p id="msg"></p>
-</div>
-
-<script src="assets/js/auth.js"></script>
 </body>
 </html>
+
