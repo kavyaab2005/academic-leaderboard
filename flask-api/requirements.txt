@@ -1,0 +1,5 @@
+// flask-api/requirements.txt
+// =============================================
+flask
+numpy
+scikit-learn
