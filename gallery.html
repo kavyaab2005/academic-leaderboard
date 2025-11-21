@@ -1,19 +1,270 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-<head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Photo Gallery</title>
-  <link rel="stylesheet" href="style.css">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery | Academic Leaderboard</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
+
+        body {
+            background: #eef2f7;
+            color: #333;
+        }
+
+        /* Navbar */
+        nav {
+            background: #ffffff;
+            padding: 15px 35px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav .logo {
+            font-size: 22px;
+            font-weight: 600;
+            color: #4b6fff;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 25px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+        }
+
+        nav ul li a:hover {
+            color: #4b6fff;
+        }
+
+        /* Page Title */
+        .heading {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 36px;
+            font-weight: 700;
+            color: #4b6fff;
+        }
+
+        /* Filters */
+        .filters {
+            width: 90%;
+            margin: 20px auto;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            background: #fff;
+            border: 1px solid #4b6fff;
+            color: #4b6fff;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: #4b6fff;
+            color: white;
+        }
+
+        /* Gallery Grid */
+        .gallery-container {
+            width: 92%;
+            margin: 30px auto;
+            columns: 3;               /* Masonry effect */
+            column-gap: 18px;
+        }
+
+        @media (max-width: 900px) {
+            .gallery-container {
+                columns: 2;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .gallery-container {
+                columns: 1;
+            }
+        }
+
+        .img-card {
+            width: 100%;
+            margin-bottom: 18px;
+            border-radius: 12px;
+            overflow: hidden;
+            break-inside: avoid;
+            position: relative;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .img-card img {
+            width: 100%;
+            display: block;
+            transition: 0.4s ease-in-out;
+        }
+
+        .img-card:hover img {
+            transform: scale(1.08);
+        }
+
+        .img-card:hover {
+            box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+        }
+
+        /* Lightbox */
+        #lightbox {
+            position: fixed;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 2000;
+        }
+
+        #lightbox img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 12px;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            background: #4b6fff;
+            color: white;
+            padding: 15px;
+            margin-top: 40px;
+        }
+    </style>
 </head>
+
 <body>
-  <header class="site-header"><a class="brand" href="index.html">LeaderBoard</a>
-    <nav><a href="index.html">Home</a><a href="leaderboard.html">Leaderboard</a><a href="study.html">Study Materials</a><a href="admin-login.html">Admin</a></nav>
-  </header>
 
-  <main class="container">
-    <h1>Gallery</h1>
-    <div id="gallery" class="gallery-grid"></div>
-  </main>
+    <!-- Navbar -->
+    <nav>
+        <div class="logo">Academic Leaderboard</div>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="leaderboard.html">Leaderboard</a></li>
+            <li><a href="study-materials.html">Study Materials</a></li>
+            <li><a href="#">Gallery</a></li>
+        </ul>
+    </nav>
 
-  <script src="script.js"></script>
+    <!-- Heading -->
+    <h1 class="heading">Gallery</h1>
+
+    <!-- Filters -->
+    <div class="filters">
+        <button class="filter-btn active" onclick="filterImages('all')">All</button>
+        <button class="filter-btn" onclick="filterImages('events')">Events</button>
+        <button class="filter-btn" onclick="filterImages('students')">Students</button>
+        <button class="filter-btn" onclick="filterImages('achievements')">Achievements</button>
+    </div>
+
+    <!-- Gallery -->
+    <div class="gallery-container" id="gallery">
+        
+        <!-- Event Images -->
+        <div class="img-card events">
+            <img src="https://i.imgur.com/0Zf7QkP.jpeg" alt="">
+        </div>
+
+        <div class="img-card events">
+            <img src="https://i.imgur.com/gXKq4zG.jpeg" alt="">
+        </div>
+
+        <!-- Students -->
+        <div class="img-card students">
+            <img src="https://i.imgur.com/IZp6LSy.jpeg" alt="">
+        </div>
+
+        <div class="img-card students">
+            <img src="https://i.imgur.com/3F3B7JX.jpeg" alt="">
+        </div>
+
+        <!-- Achievements -->
+        <div class="img-card achievements">
+            <img src="https://i.imgur.com/LoZ9CqE.jpeg" alt="">
+        </div>
+
+        <div class="img-card achievements">
+            <img src="https://i.imgur.com/9ZfIfmE.jpeg" alt="">
+        </div>
+
+    </div>
+
+    <!-- Lightbox -->
+    <div id="lightbox" onclick="closeLightbox()">
+        <img id="lightboxImg" src="" alt="">
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        © 2025 Academic Leaderboard | Developed with ❤️ by Gulla
+    </footer>
+
+
+    <!-- JavaScript -->
+    <script>
+        function filterImages(category) {
+            let images = document.querySelectorAll(".img-card");
+            let btns = document.querySelectorAll(".filter-btn");
+
+            btns.forEach(btn => btn.classList.remove("active"));
+            event.target.classList.add("active");
+
+            images.forEach(img => {
+                if (category === "all") {
+                    img.style.display = "block";
+                } else {
+                    img.style.display = img.classList.contains(category) ? "block" : "none";
+                }
+            });
+        }
+
+        // Lightbox
+        let cards = document.querySelectorAll(".img-card img");
+        let lightbox = document.getElementById("lightbox");
+        let lightboxImg = document.getElementById("lightboxImg");
+
+        cards.forEach(img => {
+            img.addEventListener("click", () => {
+                lightbox.style.display = "flex";
+                lightboxImg.src = img.src;
+            });
+        });
+
+        function closeLightbox() {
+            lightbox.style.display = "none";
+        }
+    </script>
+
 </body>
 </html>
