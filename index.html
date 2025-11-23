@@ -1,65 +1,292 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Academic Leaderboard</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Academic Leaderboard — Home</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #ff8ec7 0%, #9b7cff 40%, #6fc8ff 100%);
+      overflow-x: hidden;
+      color: #fff;
+    }
+
+    /* ---------------- NAVBAR ---------------- */
+    .nav {
+      position:fixed; top:0; left:0; right:0;
+      height:72px;
+      padding:14px 40px;
+      display:flex; justify-content:space-between; align-items:center;
+      backdrop-filter: blur(10px);
+      background: rgba(255, 255, 255, 0.15);
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      z-index:50;
+    }
+    
+    .brand {
+      display:flex; align-items:center; gap:12px;
+      font-family:Poppins;
+    }
+    .logo {
+      width:48px; height:48px; border-radius:12px;
+      background: linear-gradient(135deg,#ff9bd8,#d37bff,#7cbcff);
+      display:flex; justify-content:center; align-items:center;
+      font-weight:800; font-size:17px;
+      color:white;
+      box-shadow:0 6px 20px rgba(255,255,255,0.25);
+    }
+
+    .nav-links a {
+      margin:0 14px;
+      color:#fff;
+      font-weight:600;
+      transition:0.3s;
+      padding:8px 14px;
+      border-radius:999px;
+    }
+    .nav-links a:hover {
+      background:rgba(255,255,255,0.25);
+    }
+
+    .cta {
+      padding:10px 20px;
+      background:linear-gradient(90deg,#ffe4b5,#ff9ec4);
+      color:#5a0054 !important;
+      font-weight:800;
+      border-radius:999px;
+      box-shadow:0 8px 30px rgba(255,207,240,0.5);
+    }
+
+    /* ---------------- HERO SECTION ---------------- */
+    .hero {
+      width:100%;
+      padding-top:120px;
+      padding-bottom:60px;
+      display:flex; justify-content:center;
+      position:relative;
+    }
+
+    .blob-1, .blob-2 {
+      position:absolute;
+      width:600px; height:600px;
+      background:radial-gradient(circle,#ffd6f5,transparent 70%);
+      filter: blur(80px);
+      opacity:0.6;
+    }
+    .blob-1 { top:-120px; left:-120px; }
+    .blob-2 { bottom:-80px; right:-80px; background:radial-gradient(circle,#b3a3ff,transparent 70%); }
+
+    .hero-inner {
+      max-width:1300px; width:100%;
+      display:grid; grid-template-columns: 1fr 420px;
+      gap:40px; padding: 0 40px;
+      z-index:3;
+    }
+
+    .hero-card {
+      padding:40px;
+      border-radius:26px;
+      background:rgba(255,255,255,0.12);
+      backdrop-filter: blur(10px);
+      box-shadow:0 20px 40px rgba(0,0,0,0.25);
+    }
+
+    .hero h2 {
+      font-size:48px;
+      line-height:1.1;
+      margin-bottom:12px;
+      font-family:Poppins;
+    }
+    .lead { font-size:18px; opacity:0.92; margin-bottom:20px; }
+
+    .btn {
+      padding:12px 22px;
+      border-radius:12px;
+      font-weight:700;
+      display:inline-flex; align-items:center;
+      border:none; cursor:pointer;
+      text-decoration:none;
+      transition:0.3s;
+    }
+    .btn-primary {
+      background:linear-gradient(90deg,#ff7ecb,#b980ff);
+      color:#fff;
+      box-shadow:0 10px 30px rgba(255,150,216,0.4);
+    }
+    .btn-outline {
+      border:2px solid rgba(255,255,255,0.7);
+      color:#fff;
+      background:transparent;
+    }
+
+    .actions { display:flex; gap:14px; margin-top:10px; }
+
+    /* ---------------- HERO IMAGE ---------------- */
+    .device {
+      width:390px; height:360px; border-radius:26px;
+      overflow:hidden;
+      background:rgba(255,255,255,0.22);
+      backdrop-filter: blur(8px);
+      border:1px solid rgba(255,255,255,0.35);
+      box-shadow:0 20px 60px rgba(0,0,0,0.35);
+      transform:rotate(-4deg);
+    }
+
+    .device img { width:110%; height:110%; object-fit:cover; opacity:0.95; }
+
+    /* ---------------- FEATURE CARDS ---------------- */
+    .features {
+      margin-top:30px;
+      display:grid;
+      grid-template-columns: repeat(3,1fr);
+      gap:22px;
+    }
+
+    .feature {
+      background:linear-gradient(135deg,#ff9ec4,#b49dff);
+      padding:20px;
+      border-radius:20px;
+      color:#fff;
+      box-shadow:0 8px 30px rgba(0,0,0,0.25);
+      transition:0.3s;
+    }
+    .feature:hover {
+      transform: translateY(-8px);
+      box-shadow:0 16px 40px rgba(0,0,0,0.35);
+    }
+
+    .feature .icon {
+      font-size:28px; margin-bottom:6px;
+    }
+
+    /* ---------------- STATS ---------------- */
+    .stats {
+      margin-top:24px;
+      display:flex; gap:20px;
+    }
+
+    .stat {
+      flex:1;
+      padding:20px;
+      border-radius:18px;
+      background:rgba(255,255,255,0.22);
+      text-align:center;
+      box-shadow:0 8px 30px rgba(0,0,0,0.25);
+    }
+    .big { font-size:32px; font-weight:800; }
+    small { opacity:0.9; }
+
+    /* CTA STRIP */
+    .cta-strip {
+      margin:60px auto 80px;
+      max-width:1200px;
+      padding:22px 30px;
+      border-radius:20px;
+      background:rgba(255,255,255,0.18);
+      display:flex; justify-content:space-between; align-items:center;
+      box-shadow:0 10px 40px rgba(0,0,0,0.25);
+      backdrop-filter:blur(10px);
+    }
+
+    footer {
+      padding:40px;
+      text-align:center;
+      background:rgba(0,0,0,0.25);
+      color:#fff;
+      margin-top:60px;
+    }
+  </style>
 </head>
 
 <body>
 
-    <!-- NAVBAR -->
-    <nav class="navbar">
-        <div class="logo">Academic<span>Rank</span></div>
-        <ul>
-            <li><a href="#">Home</a></li>
-            <li><a href="#">Leaderboard</a></li>
-            <li><a href="#">Materials</a></li>
-            <li><a href="#">Gallery</a></li>
-            <li><a href="#" class="admin-btn">Admin</a></li>
-        </ul>
-    </nav>
+<header class="nav">
+  <div class="brand">
+    <div class="logo">AL</div>
+    <h1>Academic Leaderboard</h1>
+  </div>
 
-    <!-- HERO SECTION -->
-    <section class="hero">
-        <div class="hero-content">
-            <h1>Track. Improve. Celebrate.</h1>
-            <p>Your academic journey—visualized with clarity, motivation, and achievement.</p>
-            <a href="#" class="cta">View Leaderboard</a>
+  <nav class="nav-links">
+    <a href="leaderboard.html">Leaderboard</a>
+    <a href="study-materials.html">Materials</a>
+    <a href="gallery.html">Gallery</a>
+    <a href="admin-login.html">Admin</a>
+    <a href="add-student.html" class="cta">Add Student</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="blob-1"></div>
+  <div class="blob-2"></div>
+
+  <div class="hero-inner">
+
+    <!-- LEFT -->
+    <div class="hero-card">
+      <h2>Track Progress. Share Resources. Shine Together.</h2>
+      <p class="lead">A colourful, modern platform for rankings, study materials, achievements & growth.</p>
+
+      <div class="actions">
+        <a href="leaderboard.html" class="btn btn-primary">View Leaderboard</a>
+        <a href="study-materials.html" class="btn btn-outline">Browse Materials</a>
+      </div>
+
+      <!-- FEATURES -->
+      <div class="features">
+        <div class="feature">
+          <div class="icon">🏆</div>
+          <h4>Dynamic Rankings</h4>
+          <p>Auto-updating performance charts & student insights.</p>
         </div>
 
-        <div class="hero-img">
-            <img src="https://cdn3d.iconscout.com/3d/premium/thumb/leaderboard-3d-icon-download-in-png-blend-fbx-gltf-file-formats--ranking-competition-rankings-sports-award-award-and-achievements-icons-7418774.png" alt="">
+        <div class="feature">
+          <div class="icon">📚</div>
+          <h4>Organized Notes</h4>
+          <p>Upload study materials by subject and category.</p>
         </div>
-    </section>
 
-    <!-- FEATURES -->
-    <section class="features">
-        <h2>Why AcademicRank?</h2>
-
-        <div class="feature-boxes">
-            <div class="box">
-                <h3>📊 Smart Leaderboard</h3>
-                <p>View ranks, marks, GPA trends & subject-wise performance.</p>
-            </div>
-
-            <div class="box">
-                <h3>📚 Study Materials</h3>
-                <p>Access organized notes, PDFs, question banks & more.</p>
-            </div>
-
-            <div class="box">
-                <h3>🖼️ Gallery Highlights</h3>
-                <p>Showcasing achievements, events & memories in one place.</p>
-            </div>
+        <div class="feature">
+          <div class="icon">🔔</div>
+          <h4>Smart Alerts</h4>
+          <p>Events, achievements, test reminders & more.</p>
         </div>
-    </section>
+      </div>
 
-    <!-- FOOTER -->
-    <footer>
-        <p>© 2025 AcademicRank — Smart Academic Analysis Platform</p>
-    </footer>
+      <!-- STATS -->
+      <div class="stats">
+        <div class="stat"><div class="big">128</div><small>Students</small></div>
+        <div class="stat"><div class="big">372</div><small>Materials</small></div>
+        <div class="stat"><div class="big">16</div><small>Achievements</small></div>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="device">
+      <img src="/mnt/data/4a8cdeed-362b-4091-900c-3868cd08b169.png" alt="">
+    </div>
+
+  </div>
+</section>
+
+<section class="cta-strip">
+  <div>
+    <h3>Ready to build your leaderboard?</h3>
+    <p style="opacity:0.9;">Start adding students, materials, and achievements.</p>
+  </div>
+
+  <a class="btn btn-primary" href="admin-dashboard.html">
+    Get Started →
+  </a>
+</section>
+
+<footer>
+  Academic Leaderboard • Designed for growth & success 🌟
+</footer>
 
 </body>
 </html>
