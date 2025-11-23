@@ -1,193 +1,419 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Academic Leaderboard</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Academic Leaderboard — Home</title>
 
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <!-- Google fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="style.css">
+  <style>
+    /* ========== Reset & Base ========== */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html,body { height: 100%; }
+    body {
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: linear-gradient(180deg, #0f172a 0%, #071032 50%, #0b1630 100%);
+      color: #0b1020;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      overflow-x: hidden;
+    }
 
-    <style>
-        /* ===== GLOBAL ===== */
-        body {
-            margin: 0;
-            font-family: 'Poppins', sans-serif;
-            background: #f8f9fc;
-        }
+    a { color: inherit; text-decoration: none; }
 
-        nav {
-            display: flex;
-            justify-content: space-between;
-            padding: 20px 50px;
-            background: rgba(255,255,255,0.7);
-            backdrop-filter: blur(8px);
-            position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 100;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
+    /* ========== NAVBAR ========== */
+    .nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 72px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding: 14px 36px;
+      z-index: 60;
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+      backdrop-filter: blur(8px) saturate(120%);
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
 
-        nav a {
-            text-decoration: none;
-            margin: 0 15px;
-            color: #333;
-            font-weight: 600;
-        }
+    .brand {
+      display:flex; gap:12px; align-items:center;
+    }
+    .brand .logo {
+      width:44px; height:44px;
+      border-radius:10px;
+      background: linear-gradient(135deg,#6f6bff,#4d9fff 60%, #a85bff);
+      display:flex; align-items:center; justify-content:center;
+      box-shadow: 0 6px 20px rgba(122,82,255,0.16), inset 0 -3px 8px rgba(255,255,255,0.06);
+      color:white; font-weight:800; font-family:Poppins, sans-serif;
+      letter-spacing:0.6px;
+    }
+    .brand h1 {
+      font-size:18px; color:#eaf0ff; margin-left:6px; font-weight:700; letter-spacing:0.2px;
+    }
 
-        /* ===== HERO SECTION ===== */
-        .hero {
-            height: 100vh;
-            background: linear-gradient(135deg, #4d9fff, #6f6bff, #a85bff);
-            color: white;
-            text-align: center;
-            padding-top: 180px;
-            position: relative;
-            overflow: hidden;
-        }
+    .nav-links {
+      display:flex; gap:20px; align-items:center; color: #dbe7ff;
+    }
+    .nav-links a {
+      padding:8px 12px; border-radius:8px; font-weight:600;
+    }
+    .nav-links a:hover {
+      background: linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+    }
 
-        .hero h1 {
-            font-size: 52px;
-            font-weight: 700;
-            animation: fadeInDown 1s ease;
-        }
+    .cta {
+      padding:10px 18px;
+      background: linear-gradient(90deg, #ffffff, #f4f6ff);
+      color:#3b46ff; font-weight:800; border-radius:999px;
+      box-shadow: 0 10px 30px rgba(77,159,255,0.12), 0 2px 8px rgba(0,0,0,0.15);
+      transition: transform .18s ease, box-shadow .18s ease;
+    }
+    .cta:hover { transform: translateY(-3px); box-shadow: 0 14px 40px rgba(77,159,255,0.18); }
 
-        .hero p {
-            font-size: 20px;
-            margin-top: 15px;
-            opacity: 0.9;
-            animation: fadeIn 2s ease;
-        }
+    /* ========== HERO ========== */
+    .hero {
+      min-height: 92vh;
+      padding-top: 88px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      position:relative;
+      overflow:hidden;
+    }
 
-        .btn-primary {
-            padding: 14px 35px;
-            background: white;
-            color: #4d4dff;
-            border-radius: 50px;
-            margin-top: 30px;
-            display: inline-block;
-            font-weight: 700;
-            text-decoration: none;
-            transition: 0.3s;
-            animation: fadeInUp 1s ease;
-        }
+    /* colorful gradient orb background & subtle texture */
+    .hero::before {
+      content: "";
+      position:absolute; inset: -10% -15% auto auto;
+      width:1100px; height:1100px;
+      background: radial-gradient(circle at 20% 20%, rgba(108,92,255,0.30), transparent 18%),
+                  radial-gradient(circle at 80% 70%, rgba(77,159,255,0.22), transparent 18%),
+                  radial-gradient(circle at 60% 30%, rgba(168,91,255,0.18), transparent 20%);
+      filter: blur(90px);
+      transform: rotate(8deg);
+      z-index: 0;
+      pointer-events:none;
+    }
 
-        .btn-primary:hover {
-            background: #e6e6ff;
-        }
+    /* subtle star/particle specks */
+    .stars {
+      position:absolute; inset:0;
+      background-image:
+        radial-gradient(circle at 10% 20%, rgba(255,255,255,0.06) 0.5px, transparent 0.6px),
+        radial-gradient(circle at 40% 40%, rgba(255,255,255,0.05) 0.5px, transparent 0.6px),
+        radial-gradient(circle at 80% 80%, rgba(255,255,255,0.04) 0.4px, transparent 0.6px);
+      opacity:0.35; z-index:1; pointer-events:none; mix-blend-mode:overlay;
+    }
 
-        /* Floating shapes */
-        .bubble {
-            position: absolute;
-            background: rgba(255,255,255,0.25);
-            border-radius: 50%;
-            animation: float 8s infinite ease-in-out;
-        }
+    .hero-inner {
+      width:100%; max-width:1180px;
+      padding: 36px;
+      display:grid;
+      grid-template-columns: 1fr 420px;
+      gap:30px;
+      align-items:center;
+      z-index:5;
+    }
 
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-40px); }
-            100% { transform: translateY(0px); }
-        }
+    .hero-card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+      border-radius: 20px;
+      padding:36px;
+      box-shadow: 0 12px 40px rgba(7,16,48,0.5);
+      backdrop-filter: blur(8px) saturate(120%);
+      border: 1px solid rgba(255,255,255,0.04);
+      color: #eaf0ff;
+    }
 
-        /* ===== FEATURE CARDS ===== */
-        .features {
-            padding: 70px 60px;
-            display: flex;
-            justify-content: center;
-            gap: 40px;
-        }
+    .hero h2 {
+      font-family: Poppins, sans-serif;
+      font-size:44px; line-height:1.02;
+      margin-bottom:12px;
+      color: #fff;
+      text-shadow: 0 6px 30px rgba(102, 88, 255, 0.24);
+    }
 
-        .card {
-            width: 300px;
-            background: white;
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-            text-align: center;
-            transition: 0.3s ease;
-        }
+    .hero p.lead {
+      color: rgba(235,243,255,0.92);
+      font-size:18px; margin-bottom:18px;
+    }
 
-        .card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 12px 25px rgba(0,0,0,0.12);
-        }
+    .hero .actions { display:flex; gap:14px; align-items:center; margin-top:6px; }
+    .btn {
+      display:inline-flex; align-items:center; justify-content:center;
+      gap:10px; padding:12px 18px; border-radius:12px; font-weight:700;
+      cursor:pointer; transition: transform .16s ease, box-shadow .16s ease;
+    }
+    .btn-primary {
+      background: linear-gradient(90deg,#5f8bff,#9c74ff);
+      color:white; box-shadow: 0 10px 30px rgba(99,110,255,0.18);
+      border: none;
+    }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.12);
+      color: #e9f0ff;
+    }
+    .btn:hover { transform: translateY(-4px); }
 
-        .card h3 {
-            margin: 15px 0;
-            font-size: 20px;
-            color: #333;
-        }
+    /* decorative screenshot / artwork */
+    .hero-side {
+      position:relative;
+      display:flex; align-items:center; justify-content:center;
+      height:460px;
+    }
 
-        .card p {
-            font-size: 15px;
-            color: #555;
-        }
+    .device {
+      width:380px; height:320px;
+      border-radius:20px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+      border:1px solid rgba(255,255,255,0.06);
+      box-shadow: 0 18px 50px rgba(8,12,40,0.6);
+      display:flex; align-items:center; justify-content:center;
+      overflow:hidden;
+      position:relative;
+      transform: rotate(-2deg);
+    }
 
-        /* Animations */
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+    .device img {
+      width:110%; height:110%; object-fit:cover; opacity:0.95; transform: translateY(-6px);
+      mix-blend-mode: screen;
+    }
 
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+    /* neon label */
+    .neon {
+      display:inline-block; padding:8px 12px; border-radius:999px;
+      background: linear-gradient(90deg,#ffd6f8 0%, #c7f0ff 100%);
+      font-weight:800; color:#0b1220; font-size:13px;
+      box-shadow: 0 6px 20px rgba(160,114,255,0.18);
+    }
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-    </style>
+    /* ========== FEATURE GRID ========== */
+    .features-wrap {
+      margin-top: 32px;
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:24px;
+      z-index:5;
+    }
+
+    .feature {
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+      border-radius: 16px;
+      padding:18px;
+      color:#eaf2ff;
+      border: 1px solid rgba(255,255,255,0.03);
+      box-shadow: 0 8px 28px rgba(8,12,40,0.5);
+      transition: transform .18s ease;
+      display:flex; gap:14px; align-items:flex-start;
+    }
+    .feature:hover { transform: translateY(-8px); box-shadow: 0 18px 40px rgba(8,12,40,0.65); }
+
+    .feature .icon {
+      min-width:52px; min-height:52px; border-radius:12px;
+      display:flex; align-items:center; justify-content:center;
+      font-size:22px; background: linear-gradient(135deg,#ff9cda,#9fb3ff);
+      color:#081025; font-weight:800;
+      box-shadow: 0 8px 24px rgba(120,90,255,0.12);
+    }
+    .feature h4 { font-size:16px; margin-bottom:6px; color:#fff; }
+    .feature p { color: #dbe9ff; font-size:14px; opacity:0.95; }
+
+    /* ========== TOP STAT HIGHLIGHT (glass cards) ========== */
+    .stats {
+      margin-top:28px;
+      display:flex; gap:18px; align-items:stretch;
+    }
+    .stat {
+      flex:1;
+      padding:18px;
+      border-radius:14px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+      border: 1px solid rgba(255,255,255,0.04);
+      color:#eaf8ff;
+      box-shadow: 0 12px 30px rgba(8,12,40,0.5);
+    }
+    .stat .big { font-weight:800; font-size:28px; color:#fff; }
+    .stat small { color:#c6defc; }
+
+    /* ========== CTA STRIP ========== */
+    .cta-strip {
+      margin: 48px auto 80px; max-width:1180px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+      border-radius:16px; padding:18px; border:1px solid rgba(255,255,255,0.03);
+      display:flex; align-items:center; justify-content:space-between; gap:18px;
+      box-shadow: 0 14px 40px rgba(7,16,48,0.5);
+    }
+    .cta-strip p { color:#eaf4ff; font-weight:700; font-size:16px; }
+    .cta-strip .secondary { color:#dbe9ff; font-weight:600; }
+
+    /* ========== FOOTER ========== */
+    footer {
+      margin-top:120px; padding:36px 40px; color:#cfe7ff;
+      background: linear-gradient(180deg, rgba(10,16,36,0.9), rgba(8,12,32,0.95));
+    }
+    footer .ft-inner { max-width:1180px; margin:0 auto; display:flex; justify-content:space-between; gap:20px; align-items:center; }
+
+    /* ========== Responsive ========== */
+    @media (max-width:1024px) {
+      .hero-inner { grid-template-columns: 1fr; gap:22px; padding: 22px; }
+      .hero-side { order: -1; height:auto; display:flex; justify-content:center; }
+      .device { width:320px; height:260px; transform:none; }
+      .features-wrap { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width:600px) {
+      .nav { padding: 10px 18px; height:64px; }
+      .brand h1 { font-size:15px; }
+      .hero h2 { font-size:32px; }
+      .features-wrap { grid-template-columns: 1fr; }
+      .cta-strip { flex-direction:column; align-items:flex-start; gap:12px; }
+    }
+
+    /* ========== fine animated touches ========== */
+    .float-slow { animation: floaty 7s ease-in-out infinite; }
+    .float-fast { animation: floaty 5s ease-in-out infinite; }
+    @keyframes floaty { 0% { transform: translateY(0) } 50% { transform: translateY(-14px) } 100% { transform: translateY(0) } }
+
+  </style>
 </head>
-
 <body>
 
-    <!-- NAVBAR -->
-    <nav>
-        <div class="logo"><strong>Academic Leaderboard</strong></div>
-        <div class="menu">
-            <a href="leaderboard.html">Leaderboard</a>
-            <a href="study-materials.html">Study Materials</a>
-            <a href="gallery.html">Gallery</a>
-            <a href="admin-login.html">Admin</a>
-        </div>
+  <!-- NAV -->
+  <header class="nav" role="banner">
+    <div class="brand" aria-label="brand">
+      <div class="logo">AL</div>
+      <h1>Academic Leaderboard</h1>
+    </div>
+
+    <nav class="nav-links" aria-label="Main navigation">
+      <a href="leaderboard.html">Leaderboard</a>
+      <a href="study-materials.html">Study Materials</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="admin-login.html">Admin</a>
+      <a class="cta" href="add-student.html">Add Student</a>
     </nav>
+  </header>
 
-    <!-- HERO SECTION -->
-    <section class="hero">
-        <div class="bubble" style="width: 120px; height: 120px; top: 20%; left: 10%;"></div>
-        <div class="bubble" style="width: 80px; height: 80px; top: 60%; left: 80%; animation-duration: 10s;"></div>
-        <div class="bubble" style="width: 150px; height: 150px; top: 75%; left: 5%; animation-duration: 12s;"></div>
+  <!-- HERO -->
+  <main class="hero" role="main">
+    <div class="stars" aria-hidden="true"></div>
 
-        <h1>Welcome to Academic Leaderboard</h1>
-        <p>Your smart platform to track academic achievements, study materials, and student progress.</p>
+    <div class="hero-inner">
 
-        <a class="btn-primary" href="leaderboard.html">View Leaderboard</a>
-    </section>
+      <!-- LEFT / MAIN HERO CONTENT -->
+      <div class="hero-card" style="min-height:360px;">
+        <span class="neon">New • v2.1</span>
+        <h2 style="margin-top:14px;">Build confidence. Celebrate achievements. Learn together.</h2>
+        <p class="lead">Academic Leaderboard makes tracking performance and sharing study resources simple and beautiful — designed for students, teachers & mentors.</p>
 
-    <!-- FEATURES SECTION -->
-    <section class="features">
-        <div class="card">
-            <h3>📊 Leaderboard</h3>
-            <p>Check rankings, performance, and academic achievements updated in real-time.</p>
+        <div class="actions" role="group" aria-label="Primary actions">
+          <a class="btn btn-primary" href="leaderboard.html">View Leaderboard</a>
+          <a class="btn btn-outline" href="study-materials.html">Browse Materials</a>
         </div>
 
-        <div class="card">
-            <h3>📚 Study Materials</h3>
-            <p>Access organized subject-wise notes, PDFs, and resources anytime.</p>
+        <!-- FEATURES GRID -->
+        <div class="features-wrap" style="margin-top:22px;">
+          <div class="feature float-slow">
+            <div class="icon">🏆</div>
+            <div>
+              <h4>Rankings & Insights</h4>
+              <p>Auto-updating scores, subject trends & visual leaderboard charts for teachers and peers.</p>
+            </div>
+          </div>
+
+          <div class="feature float-fast">
+            <div class="icon">📚</div>
+            <div>
+              <h4>Organized Resources</h4>
+              <p>Upload PDFs, notes & quick revision flashcards. Tag by subject & chapter for easy find.</p>
+            </div>
+          </div>
+
+          <div class="feature">
+            <div class="icon">🔔</div>
+            <div>
+              <h4>Notifications & Events</h4>
+              <p>Reminders for tests, events and achievements — keep students motivated and on track.</p>
+            </div>
+          </div>
         </div>
 
-        <div class="card">
-            <h3>🏆 Achievements</h3>
-            <p>View awards, certificates, and accomplishments of top-performing students.</p>
+        <!-- STATS / GLASS -->
+        <div class="stats" style="margin-top:18px;">
+          <div class="stat">
+            <div class="big">128</div>
+            <small>Active Students</small>
+          </div>
+          <div class="stat">
+            <div class="big">372</div>
+            <small>Study Materials</small>
+          </div>
+          <div class="stat">
+            <div class="big">16</div>
+            <small>Recent Achievements</small>
+          </div>
         </div>
-    </section>
+      </div>
 
+      <!-- RIGHT / ARTWORK DEVICE -->
+      <div class="hero-side" aria-hidden="true">
+        <div class="device" role="img" aria-label="decorative artwork">
+          <!-- using your uploaded image as an attractive overlay/background -->
+          <img src="/mnt/data/4a8cdeed-362b-4091-900c-3868cd08b169.png" alt="decorative hero image">
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- CTA STRIP -->
+  <section class="cta-strip" aria-label="call to action">
+    <div>
+      <p>Ready to make learning visible?</p>
+      <div class="secondary">Create your leaderboard, import students, and celebrate progress.</div>
+    </div>
+    <div style="display:flex; gap:12px; align-items:center;">
+      <a class="btn btn-primary" href="admin-dashboard.html">Get Started — It's free</a>
+      <a class="btn btn-outline" href="contact.html">Request a Demo</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="ft-inner">
+      <div>
+        <div style="display:flex; gap:12px; align-items:center;"><div class="logo" style="width:40px;height:40px;font-size:14px">AL</div>
+          <div>
+            <strong style="color:#fff">Academic Leaderboard</strong><br>
+            <small style="color:#cfe7ff">Built for students & teachers • Inspiring growth</small>
+          </div>
+        </div>
+      </div>
+
+      <div style="text-align:right;">
+        <div style="font-weight:700; color:#dbefff">Contact</div>
+        <small style="color:#bcdcff">support@academicleaderboard.example</small>
+      </div>
+    </div>
+  </footer>
+
+  <!-- small inline script for easy subtle interactions -->
+  <script>
+    // gentle parallax for hero device (mouse move)
+    (function(){
+      const dev = document.querySelector('.device');
+      if(!dev) return;
+      document.addEventListener('mousemove', (e) => {
+        const x = (e.clientX - window.innerWidth/2) / (window.innerWidth/8);
+        const y = (e.clientY - window.innerHeight/2) / (window.innerHeight/12);
+        dev.style.transform = `translate(${x}px, ${y}px) rotate(-2deg)`;
+      });
+      // restore on leave
+      document.addEventListener('mouseleave', () => dev.style.transform = 'rotate(-2deg)');
+    })();
+  </script>
 </body>
 </html>
 
