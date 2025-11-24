@@ -152,27 +152,6 @@
     button:hover {
       background: #3730a3;
     }
-
-    @media (max-width: 768px) {
-      .sidebar {
-        width: 200px;
-      }
-      .main {
-        margin-left: 200px;
-      }
-      .form-container {
-        padding: 25px;
-      }
-    }
-
-    @media (max-width: 600px) {
-      .sidebar {
-        display: none;
-      }
-      .main {
-        margin-left: 0;
-      }
-    }
   </style>
 
   <script>
@@ -236,7 +215,39 @@
       </form>
     </div>
   </div>
+
 <script src="script.js"></script>
+
+<!-- 🚀 Backend Connection Code Added -->
+<script>
+document.querySelector("form").addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const formData = new FormData();
+    formData.append("title", document.querySelector("input[placeholder='Enter event title']").value);
+    formData.append("date", document.querySelector("input[type='date']").value);
+    formData.append("location", document.querySelector("input[placeholder='Enter event location']").value);
+    formData.append("description", document.querySelector("textarea").value);
+
+    const imageFile = document.getElementById("eventImage").files[0];
+    if (imageFile) {
+        formData.append("image", imageFile);
+    }
+
+    try {
+        const res = await fetch("https://academic-backend-2dc6.onrender.com/events", {
+            method: "POST",
+            body: formData
+        });
+
+        const data = await res.json();
+        alert(data.message || "Event Added Successfully!");
+    } catch (err) {
+        alert("Error adding event");
+        console.error(err);
+    }
+});
+</script>
+
 </body>
 </html>
-add
