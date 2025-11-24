@@ -1,4 +1,11 @@
 /* ----------------------------------------------------
+   BACKEND BASE URL (Add API calls using this)
+---------------------------------------------------- */
+const BASE_URL = "https://academic-backend-2dc6.onrender.com";
+
+
+
+/* ----------------------------------------------------
    SIDEBAR TOGGLE (Mobile)
 ---------------------------------------------------- */
 const sidebar = document.querySelector(".sidebar");
@@ -130,3 +137,4 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.style.opacity = "1";
   }, 50);
 });
+
