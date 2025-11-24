@@ -5,8 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Add Study Material</title>
 
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght:300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 
   <style>
     * {
@@ -54,7 +53,7 @@
       background: #303f9f;
     }
 
-    /* Main Page */
+    /* Main */
     .main {
       margin-left: 260px;
       padding: 40px;
@@ -74,12 +73,6 @@
       border-radius: 18px;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
       max-width: 750px;
-      animation: fadeIn 0.7s ease;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
     }
 
     .form-card h2 {
@@ -108,15 +101,6 @@
       font-size: 16px;
       border-radius: 10px;
       border: 1px solid #ccc;
-      transition: 0.3s ease-in-out;
-    }
-
-    .input-group input:focus,
-    .input-group textarea:focus,
-    .input-group select:focus {
-      border-color: #3949ab;
-      box-shadow: 0 0 8px rgba(57, 73, 171, 0.35);
-      outline: none;
     }
 
     textarea {
@@ -130,7 +114,6 @@
       border-radius: 14px;
       padding: 25px;
       text-align: center;
-      transition: 0.3s;
       background: #f7f8ff;
       cursor: pointer;
     }
@@ -140,17 +123,10 @@
       border-color: #1a237e;
     }
 
-    .upload-box p {
-      font-size: 16px;
-      margin-top: 10px;
-      color: #3949ab;
-    }
-
     #fileInput {
       display: none;
     }
 
-    /* Button */
     button {
       width: 100%;
       padding: 14px;
@@ -168,13 +144,6 @@
     button:hover {
       background: #1a237e;
     }
-
-    /* Responsive */
-    @media (max-width: 700px) {
-      .sidebar { display: none; }
-      .main { margin: 0; width: 100%; }
-    }
-
   </style>
 </head>
 
@@ -191,7 +160,6 @@
     <a href="admin-login.html">Logout</a>
   </div>
 
-  <!-- Main Section -->
   <div class="main">
 
     <h1>Add Study Materials</h1>
@@ -200,16 +168,16 @@
 
       <h2>Upload Material</h2>
 
-      <form>
+      <form id="materialForm">
 
         <div class="input-group">
           <label>Title</label>
-          <input type="text" placeholder="Enter material title" required>
+          <input type="text" id="title" placeholder="Enter material title" required>
         </div>
 
         <div class="input-group">
           <label>Subject</label>
-          <select required>
+          <select id="subject" required>
             <option value="">Select Subject</option>
             <option>Maths</option>
             <option>Physics</option>
@@ -222,10 +190,9 @@
 
         <div class="input-group">
           <label>Description</label>
-          <textarea placeholder="Enter description..." required></textarea>
+          <textarea id="description" placeholder="Enter description..." required></textarea>
         </div>
 
-        <!-- File Upload -->
         <div class="upload-box" onclick="document.getElementById('fileInput').click()">
           <img src="https://img.icons8.com/ios-filled/50/3949ab/upload.png" width="50" />
           <p>Click to upload PDF / File</p>
@@ -238,6 +205,45 @@
       </form>
     </div>
   </div>
-  <script src="script.js"></script>
+
+<script>
+  const BACKEND_URL = "https://academic-backend-2dc6.onrender.com/materials/add";
+
+  document.getElementById("materialForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const title = document.getElementById("title").value;
+    const subject = document.getElementById("subject").value;
+    const description = document.getElementById("description").value;
+    const file = document.getElementById("fileInput").files[0];
+
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("subject", subject);
+    formData.append("description", description);
+    formData.append("file", file);
+
+    try {
+      const response = await fetch(BACKEND_URL, {
+        method: "POST",
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        alert("Material uploaded successfully!");
+        document.getElementById("materialForm").reset();
+      } else {
+        alert("Failed: " + result.message);
+      }
+
+    } catch (error) {
+      alert("Error connecting to backend");
+      console.error(error);
+    }
+  });
+</script>
+
 </body>
 </html>
