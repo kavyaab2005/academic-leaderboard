@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Events</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Poppins", sans-serif;
+    margin: 0;
+    padding: 20px;
+    background: #eef1ff;
+  }
+
+  h1 {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  .event {
+    background: white;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+
+  img {
+    width: 100%;
+    max-height: 280px;
+    border-radius: 12px;
+    object-fit: cover;
+    margin-bottom: 10px;
+  }
+
+  .title {
+    font-size: 24px;
+    font-weight: 700;
+  }
+
+  .meta {
+    color: #555;
+  }
+</style>
+
+</head>
+<body>
+
+<h1>Upcoming Events</h1>
+
+<div id="eventList"></div>
+
+<script>
+const BASE_URL = "https://academic-backend-2dc6.onrender.com/api/events";
+
+async function loadEvents() {
+    const res = await fetch(BASE_URL);
+    const events = await res.json();
+
+    const list = document.getElementById("eventList");
+    list.innerHTML = "";
+
+    events.forEach(event => {
+        list.innerHTML += `
+          <div class="event">
+            <img src="https://academic-backend-2dc6.onrender.com${event.imageUrl}" />
+
+            <div class="title">${event.title}</div>
+            <div class="meta">📅 ${event.date} • 📍 ${event.location}</div>
+            <p>${event.description}</p>
+          </div>
+        `;
+    });
+}
+
+loadEvents();
+</script>
+
+</body>
+</html>
